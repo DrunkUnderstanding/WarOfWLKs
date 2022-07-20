@@ -13,7 +13,13 @@ public class LevelManager : Singleton<LevelManager>
     [SerializeField]
     private Transform m_tileFather;
 
+    [SerializeField]
+    private Transform m_actorsFather;
+
     private Point[] m_birthPoint;
+
+    [SerializeField]
+    private CameraMovement m_cameraMovement;    //摄像头移动脚本
 
     /// <summary>
     /// 获取出生点位置，禁止外界修改
@@ -43,10 +49,18 @@ public class LevelManager : Singleton<LevelManager>
         get { return m_tilePrefabs[0].GetComponent<SpriteRenderer>().sprite.bounds.size.x; }
     }
 
+    private void Awake()
+    {
+        CreateLevel();
+        GameObject go = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/MaskAborigine");
+        go = GameObject.Instantiate(go);
+        go.transform.position = LevelManager.Instance.Tiles[BirthPoint[1]].transform.position;
+        go.transform.SetParent(m_actorsFather);
+    }
 
     void Start()
     {
-        CreateLevel();
+
     }
 
     // Update is called once per frame
@@ -64,7 +78,7 @@ public class LevelManager : Singleton<LevelManager>
         string[] mapData = ReadLevelText("mapType");
         string[] birData = ReadLevelText("birType");
 
-        //获取地图大小信息
+        //获取地图最大的X、Y，放入 Point 
         m_mapSize = new Point(mapData[0].ToCharArray().Length, mapData.Length);
 
         //map x size
@@ -85,8 +99,14 @@ public class LevelManager : Singleton<LevelManager>
                 PlaceTile(newTiles[x].ToString(), x, y, worldStart);
             }
         }
+        Vector3 maxTile = Vector3.zero;
+
+        maxTile = Tiles[new Point(mapX - 1, mapY - 1)].transform.position;
+
+        m_cameraMovement.SetLimits(new Vector3(maxTile.x + TileSize, maxTile.y - TileSize));
+
         //设置出生点
-        m_birthPoint= SetBirthPoint(birData);
+        m_birthPoint = SetBirthPoint(birData);
 
     }
 
@@ -101,8 +121,9 @@ public class LevelManager : Singleton<LevelManager>
         for (int i = 0; i < birPointStrs.Length; i++)
         {
             string str = birPointStrs[i];
-            points[i].X = int.Parse(str.Substring(0, 1));
-            points[i].Y = int.Parse(str.Substring(1, 1));
+            int index = str.IndexOf(",");
+            points[i].X = int.Parse(str.Substring(0, index));
+            points[i].Y = int.Parse(str.Substring(index + 1, str.Length - index - 1));
         }
         return points;
     }
@@ -123,8 +144,8 @@ public class LevelManager : Singleton<LevelManager>
         //修改positon,Point的位置
         newTile.Setup(new Point(x, y), new Vector3(worldStart.x + (TileSize * x), worldStart.y - (TileSize * y), 0), m_tileFather);
 
-
     }
+
     private string[] ReadLevelText(string txtType)
     {
         //载入地板图层的信息

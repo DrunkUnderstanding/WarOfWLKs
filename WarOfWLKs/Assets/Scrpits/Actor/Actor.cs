@@ -10,55 +10,107 @@ public class Actor : MonoBehaviour
 
     //玩家移动的速度
     [SerializeField]
-    private float m_ActorSpeed;
+    private float m_actorSpeed;
 
-    private void GetInput()
+    //动画
+    private Animator ani;
+
+    //鼠标点击位置
+    private Vector2 m_destination;
+
+    //鼠标点击位置与当前位置的向量
+    private Vector2 m_moveVec;
+
+    //当前移动的方向
+    private Vector2 m_direct;
+
+    /// <summary>
+    /// 获取玩家点击位置
+    /// </summary>
+    private void GetMouse1Down()
     {
-        //绑定键位
-        if (Input.GetKey(KeyCode.W))
-        {
-            transform.Translate(Vector3.up * m_ActorSpeed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            transform.Translate(Vector3.down * m_ActorSpeed * Time.deltaTime);
-        }
 
-        if (Input.GetKey(KeyCode.A))
+        //如果按下鼠标右键（0是左键、1是右键）
+        if (Input.GetMouseButtonDown(1))
         {
-            transform.Translate(Vector3.left * m_ActorSpeed * Time.deltaTime);
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            transform.Translate(Vector3.right * m_ActorSpeed * Time.deltaTime);
-        }
+            //向鼠标点击的位置发射射线
+            m_destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        transform.position = new Vector3(Mathf.Clamp(transform.position.x, 0, m_xMax), Mathf.Clamp(transform.position.y, m_yMin, 0), -10);
+            //设置移动向量
+            m_moveVec = m_destination - (Vector2)transform.position;
+
+            CheckDir();
+
+            Debug.Log(m_destination);
+            //播放动画
+            ani.SetBool("Move", true);
+        }
+    }
+
+    private void CheckDir()
+    {
+        if (m_moveVec.x < 0)
+        {
+            if (m_moveVec.y > 0)
+            {
+                m_direct = new Vector2(-1, 1);
+            }
+            else
+            {
+                m_direct = new Vector2(-1, -1);
+            }
+            this.transform.rotation = Quaternion.Euler(0, 180, 0);
+        }
+        if (m_moveVec.x > 0)
+        {
+            if (m_moveVec.y > 0)
+            {
+                m_direct = new Vector2(1, 1);
+            }
+            else
+            {
+                m_direct = new Vector2(1, -1);
+            }
+            this.transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+    }
+    private void Move()
+    {
+        //移动
+        //移动向量！=（0,0）才能说明有地方可以去，不然就是点自己脚底板了
+        if (m_moveVec != Vector2.zero)
+        {
+            //移动过去
+            transform.position = Vector2.MoveTowards(transform.position, m_destination, m_actorSpeed * Time.deltaTime);
+        }
+    }
+
+    //停止移动
+    public void Stop()
+    {
+        //计算自身和目标点的距离
+        float distance = Vector2.Distance(transform.position, m_destination);
+        //判断和目标点的距离是否小于0.01f
+        if (distance < 0.01f)
+        {
+            //如果小于就判定到达目的地，执行待机
+            m_moveVec = Vector2.zero;
+            //停止播放动画
+            ani.SetBool("Move", false);
+        }
     }
     // Start is called before the first frame update
     void Start()
     {
-
+        ani = this.gameObject.GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        GetInput();
+        GetMouse1Down();
+        Move();
+        Stop();
     }
 
-    /// <summary>
-    /// 设置摄像头移动限制
-    /// </summary>
-    /// <param name="maxTile"></param>
-    public void SetLimits(Vector3 maxTile)
-    {
-        m_ActorSpeed = 5;
-
-        //设置wp的位置为右下角（1,0）
-        Vector3 wp = Camera.main.ViewportToWorldPoint(new Vector3(1, 0));
-
-        m_xMax = maxTile.x - wp.x;
-        m_yMin = maxTile.y - wp.y;
-    }
 }
