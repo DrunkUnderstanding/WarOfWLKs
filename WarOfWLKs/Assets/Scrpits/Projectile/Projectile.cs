@@ -45,14 +45,16 @@ public class Projectile : MonoBehaviour
 
         //设置移动
         this.m_moveDir = moveDir;
+        Debug.Log(moveDir);
         this.m_moveDistance = castDistance;
         this.m_targetPos = new Vector2(this.transform.position.x, this.transform.position.y) + moveDir * castDistance ;
+        //this.m_targetPos = targetPos;
         this.m_projSpeed = projSpeed;
 
         //找到父节点
         this.transform.SetParent(GameObject.Find("Projectiles").transform);
 
-        SetAngle();
+        //SetAngle();
     }
 
 
@@ -90,7 +92,7 @@ public class Projectile : MonoBehaviour
             //回收子弹
             GameManager.Instance.Pool.ReleaseObject(gameObject);
             //停止播放动画
-            //ani.SetBool("Move", false);
+            m_animator.SetBool("Move", false);
         }
     }
 

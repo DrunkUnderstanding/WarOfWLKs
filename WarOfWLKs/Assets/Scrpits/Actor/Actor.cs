@@ -79,8 +79,9 @@ public class Actor : MonoBehaviour
             {
                 //向鼠标点击的位置发射射线
                 //Vector2 skillPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                
                 m_destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Debug.Log(m_destination);
+                //Debug.Log(m_destination);
 
                 CastSkill(m_destination);
 
@@ -93,11 +94,11 @@ public class Actor : MonoBehaviour
     /// <param name="skillPos">//暂时不需要使用技能要到达的位置</param>
     private void CastSkill(Vector2 skillPos)
     {
-        Projectile projectile = GameManager.Instance.Pool.GetObject("FireProjectile").GetComponent<Projectile>();
+        Projectile projectile = GameManager.Instance.Pool.GetObject(m_readySkill.ProjName).GetComponent<Projectile>();
 
-        Skills[0].IsCoolDown = true;
-
-        projectile.InitPorjectile(this, skillPos.normalized, skillPos, Skills[0].CastDistance, Skills[0].ProjSpeed);
+        m_readySkill.IsCoolDown = true;
+        Vector2 skillMoveVec = new Vector2(skillPos.x - this.transform.position.x, skillPos.y - this.transform.position.y);
+        projectile.InitPorjectile(this, skillMoveVec.normalized, skillPos, m_readySkill.CastDistance, m_readySkill.ProjSpeed);
         m_skillRange.SetActive(false);
         b_isPrepareCast = false;
     }
@@ -123,7 +124,8 @@ public class Actor : MonoBehaviour
 
     public void CastReady(SkillBase skill)
     {
-
+        //设置当前已经准备好的技能
+        m_readySkill = skill;
         //设置当前技能的施法距离
         m_skillRange.transform.localScale = Vector3.one * (float)(skill.CastDistance / 0.02);
         //开启技能范围显示
@@ -194,14 +196,21 @@ public class Actor : MonoBehaviour
         ani = this.gameObject.GetComponent<Animator>();
         Skills.Add(new FireSkill(this));
     }
+    //
     void GetMouseClick()
     {
-        GetMouse0Down();
-        GetMouse1Down();
+        //设置在本地
+        if (this.gameObject.tag == "Player1")
+        {
+            GetMouse0Down();
+            GetMouse1Down();
+        }
+
     }
     // Update is called once per frame
     void Update()
     {
+        //Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         GetMouseClick();
         MoveTo(m_destination);
         GetSkillClick();

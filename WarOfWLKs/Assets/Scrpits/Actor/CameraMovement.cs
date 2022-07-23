@@ -10,6 +10,7 @@ public class CameraMovement : MonoBehaviour
     private float m_xMax;
     private float m_yMin;
 
+    //相机跟随的玩家节点
     private Transform m_playerTransform;
 
     //设定一个角色能看到的最远值
@@ -31,7 +32,7 @@ public class CameraMovement : MonoBehaviour
 
         //获取当前角色的transform
         m_playerTransform = GameObject.FindGameObjectWithTag("Player1").GetComponent<Transform>();
-        Debug.Log(m_playerTransform);
+        //Debug.Log(m_playerTransform);
     }
 
 

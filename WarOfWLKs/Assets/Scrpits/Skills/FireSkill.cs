@@ -17,6 +17,10 @@ public class FireSkill : SkillBase
         this.CastDistance = 2;
 
         this.KeyCode = KeyCode.Q;
+
+        this.SkillName = "Fire";
+
+        this.ProjName = "Apple";
     }
     // Start is called before the first frame update
 

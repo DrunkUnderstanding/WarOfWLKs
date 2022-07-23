@@ -9,10 +9,10 @@ public class GameManager : Singleton<GameManager>
     private Actor m_playerSelf;
 
     [SerializeField]
-    private GameObject statesPanel;
+    private GameObject m_statesPanel;
 
     [SerializeField]
-    private Text statesTxt;
+    private Text m_stateText;
 
     public ObjectPool Pool { get; set; }
 
@@ -45,7 +45,23 @@ public class GameManager : Singleton<GameManager>
         m_playerSelf.IsOnButtom = false;
        // Debug.Log(m_playerSelf.IsOnButtom);
     }
+    /// <summary>
+    /// 显示左下方介绍栏
+    /// </summary>
+    public void ShowStats()
+    {
+        m_statesPanel.SetActive(!m_statesPanel.activeSelf);
+    }
 
+
+    /// <summary>
+    /// 设置左下方介绍栏的文本
+    /// </summary>
+    /// <param name="txt"></param>
+    public void SetTooltipText(string txt)
+    {
+        m_stateText.text = txt;
+    }
     // Update is called once per frame
     void Update()
     {

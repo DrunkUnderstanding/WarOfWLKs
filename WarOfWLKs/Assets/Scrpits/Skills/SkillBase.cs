@@ -7,11 +7,15 @@ public class SkillBase
     //发射技能的角色
     Actor m_player;
 
-    private float projSpeed;
+    private string m_projName;
+
+    private string m_skillName;
+
+    private float m_projSpeed;
 
     private bool b_isCoolDown = false;
 
-    private float coolDown;
+    private float m_coolDown;
 
     //图标位置
     protected string m_iconPath;
@@ -30,9 +34,11 @@ public class SkillBase
 
     public bool IsCoolDown { get => b_isCoolDown; set => b_isCoolDown = value; }
     public float CastDistance { get => castDistance; set => castDistance = value; }
-    public float CoolDown { get => coolDown; set => coolDown = value; }
-    public float ProjSpeed { get => projSpeed; set => projSpeed = value; }
+    public float CoolDown { get => m_coolDown; set => m_coolDown = value; }
+    public float ProjSpeed { get => m_projSpeed; set => m_projSpeed = value; }
     public KeyCode KeyCode { get => m_keyCode; set => m_keyCode = value; }
+    public string SkillName { get => m_skillName; set => m_skillName = value; }
+    public string ProjName { get => m_projName; set => m_projName = value; }
 
     public SkillBase(Actor player)
     {
