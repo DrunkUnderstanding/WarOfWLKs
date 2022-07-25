@@ -13,6 +13,10 @@ public class Actor : MonoBehaviour
     private GameObject m_skillRange;
 
     private SkillBase m_readySkill;
+
+    [SerializeField]
+    public Stat m_health;
+
     //动画
     private Animator ani;
 
@@ -29,6 +33,9 @@ public class Actor : MonoBehaviour
     private bool b_isPrepareCast = false;
 
     private bool b_isClickButtom = false;
+
+    public bool IsActive { get; set; }
+    public float MaxSpeed { get; set; }
     /*    /// <summary>
         /// 当单位移动时,触发的事件
         /// </summary>
@@ -45,7 +52,7 @@ public class Actor : MonoBehaviour
     {
 
         //如果按下鼠标右键（0是左键、1是右键）
-        if (Input.GetMouseButtonDown(1) )
+        if (Input.GetMouseButtonDown(1))
         {
             //向鼠标点击的位置发射射线
             m_destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -79,7 +86,7 @@ public class Actor : MonoBehaviour
             {
                 //向鼠标点击的位置发射射线
                 //Vector2 skillPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                
+
                 m_destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 //Debug.Log(m_destination);
 
@@ -98,7 +105,7 @@ public class Actor : MonoBehaviour
 
         m_readySkill.IsCoolDown = true;
         Vector2 skillMoveVec = new Vector2(skillPos.x - this.transform.position.x, skillPos.y - this.transform.position.y);
-        projectile.InitPorjectile(this, skillMoveVec.normalized, skillPos, m_readySkill.CastDistance, m_readySkill.ProjSpeed);
+        projectile.InitPorjectile(this, skillMoveVec.normalized, skillPos, m_readySkill.CastDistance, m_readySkill.ProjSpeed, m_readySkill);
         m_skillRange.SetActive(false);
         b_isPrepareCast = false;
     }
@@ -150,6 +157,8 @@ public class Actor : MonoBehaviour
                 m_direct = new Vector2(-1, -1);
             }
             this.transform.rotation = Quaternion.Euler(0, 180, 0);
+
+            this.transform.GetChild(1).rotation = Quaternion.Euler(0, 0, 0);
         }
         if (m_moveVec.x > 0)
         {
@@ -162,6 +171,7 @@ public class Actor : MonoBehaviour
                 m_direct = new Vector2(1, -1);
             }
             this.transform.rotation = Quaternion.Euler(0, 0, 0);
+            this.transform.GetChild(1).rotation = Quaternion.Euler(0, 0, 0);
         }
     }
     private void MoveTo(Vector2 pos)
@@ -194,7 +204,15 @@ public class Actor : MonoBehaviour
     void Start()
     {
         ani = this.gameObject.GetComponent<Animator>();
+
+        //游戏开始时绑定技能给Actor
         Skills.Add(new FireSkill(this));
+        //测试死亡需要，绑定技能
+        m_readySkill = Skills[0];
+
+        m_health.Bar.Reset();
+
+        MaxSpeed = m_actorSpeed;
     }
     //
     void GetMouseClick()
@@ -215,6 +233,10 @@ public class Actor : MonoBehaviour
         MoveTo(m_destination);
         GetSkillClick();
         HandleSkills();
+        m_health.Initialize();
+        //测试生命条的代码
+        //m_health.CurrentVal -= 0.1f;
+        //HandleDamage(20f, m_readySkill);
     }
 
     //技能列表，一般只有4个技能，可加
@@ -224,7 +246,7 @@ public class Actor : MonoBehaviour
     public bool IsOnButtom { get => b_isClickButtom; set => b_isClickButtom = value; }
 
     /// <summary>
-    /// 处理角色的技能CD、等信息
+    /// 处理角色的释放技能CD、等信息
     /// </summary>
     private void HandleSkills()
     {
@@ -233,9 +255,61 @@ public class Actor : MonoBehaviour
             skill.Update();
         }
     }
-    private void HandleDamage()
+    /// <summary>
+    /// 处理角色受伤信息
+    /// </summary>
+    /// <param name="damage"></param>
+    /// <param name="skill"></param>
+    public void HandleDamage(float damage, SkillBase skill)
+    {
+        Debug.Log(this.tag);
+        this.m_health.CurrentVal -= damage;
+        //死亡
+        if (m_health.CurrentVal <= 0)
+        {
+            GameManager.Instance.ShowDie();
+
+            Release();
+        }
+    }
+
+    /// <summary>
+    /// 释放当前 Actor，并且将当前 Monster 放入 Pool
+    /// </summary>
+    public void Release()
     {
 
+        //需要这一句，其他代码位置不存在速度修改，会导致bug
+        m_actorSpeed = MaxSpeed;
+
+        //让这个对象进入 isn't active 不活跃状态
+        IsActive = false;
+
+
+        //释放对象以后再放入对象池
+        GameManager.Instance.Pool.ReleaseObject(gameObject);
+
+
+    }
+    public void Rebirth()
+    {
+        //当我们需要重新启用当前资源时，将这个资源的初始位置设置到GridPosition
+        Reset(m_health.MaxVal);
+
+        this.gameObject.SetActive(true);
+    }
+
+    public void Reset(float maxHealth)
+    {
+        transform.position = LevelManager.Instance.Tiles[LevelManager.Instance.BirthPoint[1]].transform.position;
+
+        this.m_health.Bar.Reset();
+
+        this.m_health.MaxVal = maxHealth;
+
+        this.m_health.CurrentVal = this.m_health.MaxVal;
+
+        this.m_destination = transform.position;
     }
 
 

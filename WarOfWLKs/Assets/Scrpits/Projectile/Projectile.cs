@@ -4,6 +4,8 @@ public class Projectile : MonoBehaviour
 {
     private Animator m_animator;
 
+    private SkillBase m_skill;
+
     private Actor parent;
 
     private Vector3 m_targetPos;
@@ -35,7 +37,7 @@ public class Projectile : MonoBehaviour
     /// <param name="targetPos">子弹移动到的位置</param>
     /// <param name="castDistance">技能施法距离</param>
     /// <param name="projSpeed">技能（子弹）移动速度</param>
-    public void InitPorjectile(Actor parent, Vector2 moveDir, Vector2 targetPos, float castDistance, float projSpeed)
+    public void InitPorjectile(Actor parent, Vector2 moveDir, Vector2 targetPos, float castDistance, float projSpeed, SkillBase skill)
     {
         //记录父亲（可能需要计分功能）
         this.parent = parent;
@@ -47,13 +49,16 @@ public class Projectile : MonoBehaviour
         this.m_moveDir = moveDir;
         Debug.Log(moveDir);
         this.m_moveDistance = castDistance;
-        this.m_targetPos = new Vector2(this.transform.position.x, this.transform.position.y) + moveDir * castDistance ;
+        this.m_targetPos = new Vector2(this.transform.position.x, this.transform.position.y) + moveDir * castDistance;
         //this.m_targetPos = targetPos;
         this.m_projSpeed = projSpeed;
 
         //找到父节点
         this.transform.SetParent(GameObject.Find("Projectiles").transform);
 
+        //设置该技能的类型、伤害等
+        m_skill = skill;
+        //m_animator.SetBool("Move", true);
         //SetAngle();
     }
 
@@ -92,8 +97,19 @@ public class Projectile : MonoBehaviour
             //回收子弹
             GameManager.Instance.Pool.ReleaseObject(gameObject);
             //停止播放动画
-            m_animator.SetBool("Move", false);
+            //m_animator.SetBool("Move", false);
         }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.tag == "Player2" && collision.gameObject != this.parent.gameObject)
+        {
+            Debug.Log(collision);
+            collision.gameObject.GetComponent<Actor>().HandleDamage(m_skill.Damage, m_skill);
+            this.gameObject.SetActive(false);
+        }
+
     }
 
 }

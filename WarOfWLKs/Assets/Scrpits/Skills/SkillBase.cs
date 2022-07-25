@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class SkillBase
 {
     //发射技能的角色
@@ -20,7 +22,9 @@ public class SkillBase
     //图标位置
     protected string m_iconPath;
 
-    protected int m_damage;
+
+    [SerializeField]
+    private int m_damage;
 
     private KeyCode m_keyCode;
 
@@ -39,6 +43,7 @@ public class SkillBase
     public KeyCode KeyCode { get => m_keyCode; set => m_keyCode = value; }
     public string SkillName { get => m_skillName; set => m_skillName = value; }
     public string ProjName { get => m_projName; set => m_projName = value; }
+    public int Damage { get => m_damage; set => m_damage = value; }
 
     public SkillBase(Actor player)
     {

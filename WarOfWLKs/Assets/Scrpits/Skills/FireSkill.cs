@@ -21,6 +21,8 @@ public class FireSkill : SkillBase
         this.SkillName = "Fire";
 
         this.ProjName = "Apple";
+
+        this.Damage = 10;
     }
     // Start is called before the first frame update
 

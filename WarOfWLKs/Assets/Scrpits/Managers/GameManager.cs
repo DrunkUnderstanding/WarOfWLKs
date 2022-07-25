@@ -26,7 +26,11 @@ public class GameManager : Singleton<GameManager>
     {
         m_playerSelf = GameObject.FindGameObjectWithTag("Player1").GetComponent<Actor>();
     }
+    public void RebirthClick()
+    {
 
+        m_playerSelf.Rebirth();
+    }
     public void OnClickQ()
     {
         if (!m_playerSelf.Skills[0].IsCoolDown)
@@ -61,6 +65,11 @@ public class GameManager : Singleton<GameManager>
     public void SetTooltipText(string txt)
     {
         m_stateText.text = txt;
+    }
+
+    public void ShowDie()
+    {
+
     }
     // Update is called once per frame
     void Update()
