@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0bff136aad6b54198c41f5efa045ae, type: 3}
+  m_Name: Localization_English
+  m_EditorClassIdentifier: 
+  Params:
+  - id: 1
+    value: Setting
+  - id: 2
+    value: SFX
+  - id: 3
+    value: Music
+  - id: 4
+    value: Brightness
+  - id: 5
+    value: Rebirth
+  - id: 6
+    value: QuitGame
+  - id: 7
+    value: JoinRoom
+  - id: 8
+    value: Novice trial
+  - id: 9
+    value: W<size=5>ar</size>O<size=5>f</size>W<size=5>lks</size>
+  - id: 10
+    value: Back

@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 8
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 602c1c2a12021ce428fa15c2c9720eb5, type: 3}
+  m_Name: Localization
+  m_EditorClassIdentifier: 
+  sheets:
+  - name: ChineseSimplified
+    list:
+    - id: 1
+      value: "\u8BBE\u7F6E"
+    - id: 2
+      value: "\u97F3\u6548"
+    - id: 3
+      value: "\u97F3\u4E50"
+    - id: 4
+      value: "\u4EAE\u5EA6"
+    - id: 5
+      value: "\u91CD\u751F"
+    - id: 6
+      value: "\u9000\u51FA\u6E38\u620F"
+    - id: 7
+      value: "\u52A0\u5165\u623F\u95F4"
+    - id: 8
+      value: "\u65B0\u624B\u8BD5\u73A9"
+    - id: 9
+      value: "\u672F\u58EB\u4E4B\u6218"
+    - id: 10
+      value: "\u8FD4\u56DE\u4E3B\u83DC\u5355"
+  - name: English
+    list:
+    - id: 1
+      value: Setting
+    - id: 2
+      value: SFX
+    - id: 3
+      value: Music
+    - id: 4
+      value: Brightness
+    - id: 5
+      value: Rebirth
+    - id: 6
+      value: QuitGame
+    - id: 7
+      value: JoinRoom
+    - id: 8
+      value: Novice trial
+    - id: 9
+      value: W<size=5>ar</size>O<size=5>f</size>W<size=5>lks</size>
+    - id: 10
+      value: Back
+  - name: Japanese
+    list:
+    - id: 1
+      value: "\u8A2D\u5B9A"
+    - id: 2
+      value: "\u52B9\u679C\u97F3"
+    - id: 3
+      value: "\u97F3\u697D"
+    - id: 4
+      value: "\u660E\u308B\u3055"
+    - id: 5
+      value: "\u518D\u751F"
+    - id: 6
+      value: "\u7D42\u4E86"
+    - id: 7
+      value: "\u53C2\u52A0"
+    - id: 8
+      value: "\u521D\u5FC3\u8005"
+    - id: 9
+      value: "\u30A6\u30A9\u30FC\u30ED\u30C3\u30AF\u6226\u4E89"
+    - id: 10
+      value: "\u623B\u308B"
