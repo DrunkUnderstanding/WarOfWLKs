@@ -107,9 +107,9 @@ public class Projectile : MonoBehaviour
         {
             Debug.Log(collision);
             collision.gameObject.GetComponent<Actor>().HandleDamage(m_skill.Damage, m_skill);
+            collision.gameObject.GetComponent<Actor>().KnockBack(this.gameObject.transform.position,m_skill);
             this.gameObject.SetActive(false);
         }
 
     }
-
 }

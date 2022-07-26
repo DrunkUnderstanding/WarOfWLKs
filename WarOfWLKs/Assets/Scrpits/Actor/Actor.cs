@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class Actor : MonoBehaviour
 {
@@ -20,6 +22,7 @@ public class Actor : MonoBehaviour
     //动画
     private Animator ani;
 
+    [SerializeField]
     //鼠标点击位置
     private Vector2 m_destination;
 
@@ -33,6 +36,8 @@ public class Actor : MonoBehaviour
     private bool b_isPrepareCast = false;
 
     private bool b_isClickButtom = false;
+
+    private bool b_isKnocked = false;
 
     public bool IsActive { get; set; }
     public float MaxSpeed { get; set; }
@@ -52,7 +57,7 @@ public class Actor : MonoBehaviour
     {
 
         //如果按下鼠标右键（0是左键、1是右键）
-        if (Input.GetMouseButtonDown(1))
+        if (Input.GetMouseButtonDown(1) && !b_isKnocked && !EventSystem.current.IsPointerOverGameObject())
         {
             //向鼠标点击的位置发射射线
             m_destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -80,7 +85,7 @@ public class Actor : MonoBehaviour
     /// </summary>
     private void GetMouse0Down()
     {
-        if (Input.GetMouseButtonDown(0) && !IsOnButtom)
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())// !IsOnButtom
         {
             if (b_isPrepareCast)
             {
@@ -194,6 +199,7 @@ public class Actor : MonoBehaviour
         //判断和目标点的距离是否小于0.01f
         if (distance < 0.01f)
         {
+            b_isKnocked = false;
             //如果小于就判定到达目的地，执行待机
             m_moveVec = Vector2.zero;
             //停止播放动画
@@ -255,11 +261,34 @@ public class Actor : MonoBehaviour
             skill.Update();
         }
     }
+
     /// <summary>
     /// 处理角色受伤信息
     /// </summary>
     /// <param name="damage"></param>
-    /// <param name="skill"></param>
+    public void HandleDamage(float damage)
+    {
+        Debug.Log(this.tag);
+        this.m_health.CurrentVal -= damage * Time.deltaTime;
+        //死亡
+        if (m_health.CurrentVal <= 0)
+        {
+
+            if (this.tag == "Player1")
+            {
+                GameManager.Instance.ShowDie(true);
+            }
+
+
+            Release();
+        }
+    }
+
+    /// <summary>
+    /// 处理角色受伤信息
+    /// </summary>
+    /// <param name="damage"></param>
+    /// <param name="skill">（暂无用处，之后技能可能存在buff效果需要）</param>
     public void HandleDamage(float damage, SkillBase skill)
     {
         Debug.Log(this.tag);
@@ -267,10 +296,22 @@ public class Actor : MonoBehaviour
         //死亡
         if (m_health.CurrentVal <= 0)
         {
-            GameManager.Instance.ShowDie();
-
+            if (this.tag == "Player1")
+            {
+                GameManager.Instance.ShowDie(true);
+            }
             Release();
         }
+    }
+    public void KnockBack(Vector3 projectilePos, SkillBase skill)
+    {
+        Vector2 thisPosVec2 = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
+        Vector3 moveDir = (this.gameObject.transform.position - projectilePos).normalized;
+        Vector2 moveVec = skill.KnockBackDistance * (new Vector2(moveDir.x, moveDir.y));
+        Vector2 moveTo = thisPosVec2 + moveVec;
+        m_moveVec = moveVec;
+        m_destination = moveTo;
+        b_isKnocked = true;
     }
 
     /// <summary>
@@ -297,6 +338,8 @@ public class Actor : MonoBehaviour
         Reset(m_health.MaxVal);
 
         this.gameObject.SetActive(true);
+
+        GameManager.Instance.ShowDie(false);
     }
 
     public void Reset(float maxHealth)

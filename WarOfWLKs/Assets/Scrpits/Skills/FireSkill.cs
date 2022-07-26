@@ -22,7 +22,9 @@ public class FireSkill : SkillBase
 
         this.ProjName = "Apple";
 
-        this.Damage = 10;
+        this.Damage = 20;
+
+        this.KnockBackDistance = 1;
     }
     // Start is called before the first frame update
 

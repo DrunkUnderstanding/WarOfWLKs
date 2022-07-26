@@ -36,6 +36,8 @@ public class SkillBase
 
     protected float m_cdDuration = 0;
 
+    private float knockBackDistance;
+
     public bool IsCoolDown { get => b_isCoolDown; set => b_isCoolDown = value; }
     public float CastDistance { get => castDistance; set => castDistance = value; }
     public float CoolDown { get => m_coolDown; set => m_coolDown = value; }
@@ -44,6 +46,7 @@ public class SkillBase
     public string SkillName { get => m_skillName; set => m_skillName = value; }
     public string ProjName { get => m_projName; set => m_projName = value; }
     public int Damage { get => m_damage; set => m_damage = value; }
+    public float KnockBackDistance { get => knockBackDistance; set => knockBackDistance = value; }
 
     public SkillBase(Actor player)
     {

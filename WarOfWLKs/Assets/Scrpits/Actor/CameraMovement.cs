@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraMovement : MonoBehaviour
+public class CameraMovement : Singleton<CameraMovement>
 {
 
 
@@ -30,17 +30,20 @@ public class CameraMovement : MonoBehaviour
     void Start()
     {
 
+
+    }
+
+    public void SetFollowDestination()
+    {
         //获取当前角色的transform
         m_playerTransform = GameObject.FindGameObjectWithTag("Player1").GetComponent<Transform>();
         //Debug.Log(m_playerTransform);
     }
 
-
-
     // Update is called once per frame
     void Update()
     {
-        CameraMove();
+        if(GameManager.Instance.PlayerSelf!=null) CameraMove();
     }
 
     private void CameraMove()

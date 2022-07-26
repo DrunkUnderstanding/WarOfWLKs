@@ -51,11 +51,11 @@ public class LevelManager : Singleton<LevelManager>
 
     private void Awake()
     {
-        CreateLevel();
+/*        CreateLevel();
         GameObject go = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/MaskAborigine");
         go = GameObject.Instantiate(go);
         go.transform.position = LevelManager.Instance.Tiles[BirthPoint[1]].transform.position;
-        go.transform.SetParent(m_actorsFather);
+        go.transform.SetParent(m_actorsFather);*/
     }
 
     void Start()
@@ -69,7 +69,7 @@ public class LevelManager : Singleton<LevelManager>
 
     }
 
-    private void CreateLevel()
+    public void CreateLevel()
     {
 
         Tiles = new Dictionary<Point, TileScript>();
@@ -108,6 +108,12 @@ public class LevelManager : Singleton<LevelManager>
         //设置出生点
         m_birthPoint = SetBirthPoint(birData);
 
+
+        //创建游戏角色
+        GameObject go = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/MaskAborigine");
+        go = GameObject.Instantiate(go);
+        go.transform.position = LevelManager.Instance.Tiles[BirthPoint[1]].transform.position;
+        go.transform.SetParent(m_actorsFather);
     }
 
     /// <summary>
