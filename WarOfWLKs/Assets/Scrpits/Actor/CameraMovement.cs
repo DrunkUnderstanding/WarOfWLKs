@@ -41,7 +41,7 @@ public class CameraMovement : Singleton<CameraMovement>
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if(GameManager.Instance.PlayerSelf!=null) CameraMove();
     }

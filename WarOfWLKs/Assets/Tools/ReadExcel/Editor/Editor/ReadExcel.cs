@@ -172,7 +172,7 @@ public class ReadExcel : EditorWindow
                Path.GetFileNameWithoutExtension(myWindow.excelFile.filePath));
             myWindow.isSeparated =
                 EditorPrefs.GetBool(myWindow.excelFile.filePath + myWindow.excelFile.fileName + "isSeparated",
-                   false);
+                   false);  
             using (var stream = File.Open(myWindow.excelFile.filePath, FileMode.Open, FileAccess.Read))
             {
                 //get excl data 

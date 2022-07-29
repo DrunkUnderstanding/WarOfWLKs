@@ -51,12 +51,12 @@ public class LevelManager : Singleton<LevelManager>
 
     private void Awake()
     {
-/*        CreateLevel();
-        GameObject go = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/MaskAborigine");
-        go = GameObject.Instantiate(go);
-        go.transform.position = LevelManager.Instance.Tiles[BirthPoint[1]].transform.position;
-        go.transform.SetParent(m_actorsFather);*/
-    }
+/*		CreateLevel();
+		GameObject go = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/MaskAborigine");
+		go = GameObject.Instantiate(go);
+		go.transform.position = LevelManager.Instance.Tiles[BirthPoint[1]].transform.position;
+		go.transform.SetParent(m_actorsFather);*/
+	}
 
     void Start()
     {
@@ -110,10 +110,17 @@ public class LevelManager : Singleton<LevelManager>
 
 
         //创建游戏角色
-        GameObject go = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/MaskAborigine");
-        go = GameObject.Instantiate(go);
-        go.transform.position = LevelManager.Instance.Tiles[BirthPoint[1]].transform.position;
-        go.transform.SetParent(m_actorsFather);
+        GameObject syncPlayer = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/SyncMaskAborigine");
+        syncPlayer = GameObject.Instantiate(syncPlayer);
+        syncPlayer.transform.position = Tiles[BirthPoint[0]].transform.position;
+        syncPlayer.transform.SetParent(m_actorsFather);
+
+        //创建控制角色
+        GameObject ctrlPlayer = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/CtrlMaskAborigine");
+        ctrlPlayer = GameObject.Instantiate(ctrlPlayer);
+        ctrlPlayer.transform.position = LevelManager.Instance.Tiles[BirthPoint[1]].transform.position;
+        ctrlPlayer.transform.SetParent(m_actorsFather);
+
     }
 
     /// <summary>

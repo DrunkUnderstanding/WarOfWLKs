@@ -35,6 +35,8 @@ MonoBehaviour:
       value: "\u672F\u58EB\u4E4B\u6218"
     - id: 10
       value: "\u8FD4\u56DE\u4E3B\u83DC\u5355"
+    - id: 11
+      value: "\u4F60\u9A6C\u6495\u62C9"
   - name: English
     list:
     - id: 1
@@ -57,6 +59,8 @@ MonoBehaviour:
       value: W<size=5>ar</size>O<size=5>f</size>W<size=5>lks</size>
     - id: 10
       value: Back
+    - id: 11
+      value: your mother died
   - name: Japanese
     list:
     - id: 1
@@ -79,3 +83,5 @@ MonoBehaviour:
       value: "\u30A6\u30A9\u30FC\u30ED\u30C3\u30AF\u6226\u4E89"
     - id: 10
       value: "\u623B\u308B"
+    - id: 11
+      value: "\u6BCD\u6B7B"

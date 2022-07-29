@@ -8,7 +8,7 @@ public class GameManager : Singleton<GameManager>
 
 
     [SerializeField]
-    private Actor m_playerSelf;
+    private CtrlActor m_playerSelf;
 
     [SerializeField]
     private GameObject m_statesPanel;
@@ -35,7 +35,7 @@ public class GameManager : Singleton<GameManager>
     [SerializeField]
     private Button m_setBtn;
     public ObjectPool Pool { get; set; }
-    public Actor PlayerSelf { get => m_playerSelf; set => m_playerSelf = value; }
+    public CtrlActor PlayerSelf { get => m_playerSelf; set => m_playerSelf = value; }
 
     private void Awake()
     {
@@ -117,7 +117,7 @@ public class GameManager : Singleton<GameManager>
         m_mainCamera.gameObject.SetActive(true);
         CameraMovement.Instance.SetFollowDestination();
 
-        PlayerSelf = GameObject.FindGameObjectWithTag("Player1").GetComponent<Actor>();
+        PlayerSelf = GameObject.FindGameObjectWithTag("Player1").GetComponent<CtrlActor>();
 
         m_startMenu.SetActive(false);
     }
@@ -135,6 +135,11 @@ public class GameManager : Singleton<GameManager>
 
 
     }
+
+    public void JoinRoom()
+	{
+
+	}
     void Update()
     {
 

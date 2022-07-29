@@ -9,147 +9,42 @@ public class Actor : MonoBehaviour
 
     //玩家移动的速度
     [SerializeField]
-    private float m_actorSpeed;
-
-    [SerializeField]
-    private GameObject m_skillRange;
-
-    private SkillBase m_readySkill;
+    protected float m_actorSpeed;
 
     [SerializeField]
     public Stat m_health;
 
+    protected SkillBase m_readySkill;
+
     //动画
-    private Animator ani;
+    protected Animator ani;
 
     [SerializeField]
     //鼠标点击位置
-    private Vector2 m_destination;
+    protected Vector2 m_destination;
 
     //鼠标点击位置与当前位置的向量
-    private Vector2 m_moveVec;
+    protected Vector2 m_moveVec;
 
     //当前移动的方向
-    private Vector2 m_direct;
+    protected Vector2 m_direct;
 
     //角色准备放技能
-    private bool b_isPrepareCast = false;
+    protected bool b_isPrepareCast = false;
 
-    private bool b_isClickButtom = false;
+    protected bool b_isClickButtom = false;
 
-    private bool b_isKnocked = false;
+    protected bool b_isKnocked = false;
+
 
     public bool IsActive { get; set; }
     public float MaxSpeed { get; set; }
-    /*    /// <summary>
-        /// 当单位移动时,触发的事件
-        /// </summary>
-        /// <param name="pos">单位要移动到的目标位置</param>
-        public delegate void MoveHandler(Actor actor, Vector3 pos);
 
-        // 当单位移动时,触发的事件
-        public event MoveHandler OnMove;*/
-
-    /// <summary>
-    /// 获取玩家右键点击位置
-    /// </summary>
-    private void GetMouse1Down()
-    {
-
-        //如果按下鼠标右键（0是左键、1是右键）
-        if (Input.GetMouseButtonDown(1) && !b_isKnocked && !EventSystem.current.IsPointerOverGameObject())
-        {
-            //向鼠标点击的位置发射射线
-            m_destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-            //设置移动向量
-            m_moveVec = m_destination - (Vector2)transform.position;
-
-            //设置技能范围显示
-            m_skillRange.SetActive(false);
-
-            //关闭释放技能准备
-
-            b_isPrepareCast = false;
-
-            //检测移动方向
-            CheckDir(m_destination);
-
-            //Debug.Log(m_destination);
-            //播放动画
-            ani.SetBool("Move", true);
-        }
-    }
-    /// <summary>
-    /// 获取玩家左键点击位置
-    /// </summary>
-    private void GetMouse0Down()
-    {
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())// !IsOnButtom
-        {
-            if (b_isPrepareCast)
-            {
-                //向鼠标点击的位置发射射线
-                //Vector2 skillPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-                m_destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                //Debug.Log(m_destination);
-
-                CastSkill(m_destination);
-
-            }
-        }
-    }
-    /// <summary>
-    /// 释放技能
-    /// </summary>
-    /// <param name="skillPos">//暂时不需要使用技能要到达的位置</param>
-    private void CastSkill(Vector2 skillPos)
-    {
-        Projectile projectile = GameManager.Instance.Pool.GetObject(m_readySkill.ProjName).GetComponent<Projectile>();
-
-        m_readySkill.IsCoolDown = true;
-        Vector2 skillMoveVec = new Vector2(skillPos.x - this.transform.position.x, skillPos.y - this.transform.position.y);
-        projectile.InitPorjectile(this, skillMoveVec.normalized, skillPos, m_readySkill.CastDistance, m_readySkill.ProjSpeed, m_readySkill);
-        m_skillRange.SetActive(false);
-        b_isPrepareCast = false;
-    }
-    /// <summary>
-    /// 检测是否按下技能键
-    /// </summary>
-    public void GetSkillClick()
-    {
-        //遍历绑定的技能列表获取Click信息
-        foreach (SkillBase skill in Skills)
-        {
-            if (!skill.IsCoolDown)
-            {
-                if (Input.GetKeyDown(skill.KeyCode))
-                {
-                    CastReady(skill);
-                }
-            }
-        }
-    }
-
-
-
-    public void CastReady(SkillBase skill)
-    {
-        //设置当前已经准备好的技能
-        m_readySkill = skill;
-        //设置当前技能的施法距离
-        m_skillRange.transform.localScale = Vector3.one * (float)(skill.CastDistance / 0.02);
-        //开启技能范围显示
-        m_skillRange.SetActive(!m_skillRange.activeSelf);
-        //修改施法状态
-        b_isPrepareCast = !b_isPrepareCast;
-    }
 
     /// <summary>
     /// 检测玩家移动方向,并调整方向
     /// </summary>
-    private void CheckDir(Vector2 clickVec)
+    protected void CheckDir(Vector2 clickVec)
     {
         if (m_moveVec.x <= 0)
         {
@@ -179,7 +74,7 @@ public class Actor : MonoBehaviour
             this.transform.GetChild(1).rotation = Quaternion.Euler(0, 0, 0);
         }
     }
-    private void MoveTo(Vector2 pos)
+    private void MoveUpdate(Vector2 pos)
     {
         //移动
         //移动向量！=（0,0）才能说明有地方可以去，不然就是点自己脚底板了
@@ -207,38 +102,27 @@ public class Actor : MonoBehaviour
         }
     }
     // Start is called before the first frame update
-    void Start()
+    protected virtual void Start()
     {
         ani = this.gameObject.GetComponent<Animator>();
 
         //游戏开始时绑定技能给Actor
         Skills.Add(new FireSkill(this));
-        //测试死亡需要，绑定技能
-        m_readySkill = Skills[0];
 
         m_health.Bar.Reset();
 
         MaxSpeed = m_actorSpeed;
     }
-    //
-    void GetMouseClick()
-    {
-        //设置在本地
-        if (this.gameObject.tag == "Player1")
-        {
-            GetMouse0Down();
-            GetMouse1Down();
-        }
 
-    }
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
         //Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-        GetMouseClick();
-        MoveTo(m_destination);
-        GetSkillClick();
+
+        MoveUpdate(m_destination);
+
         HandleSkills();
+
         m_health.Initialize();
         //测试生命条的代码
         //m_health.CurrentVal -= 0.1f;
@@ -249,6 +133,7 @@ public class Actor : MonoBehaviour
     private List<SkillBase> m_skills = new List<SkillBase>();
 
     public List<SkillBase> Skills { get => m_skills; set => m_skills = value; }
+
     public bool IsOnButtom { get => b_isClickButtom; set => b_isClickButtom = value; }
 
     /// <summary>
@@ -261,6 +146,7 @@ public class Actor : MonoBehaviour
             skill.Update();
         }
     }
+
 
     /// <summary>
     /// 处理角色受伤信息
@@ -278,7 +164,6 @@ public class Actor : MonoBehaviour
             {
                 GameManager.Instance.ShowDie(true);
             }
-
 
             Release();
         }

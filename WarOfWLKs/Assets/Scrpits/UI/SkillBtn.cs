@@ -21,11 +21,8 @@ public class SkillBtn : MonoBehaviour
         switch (type)
         {
             case "Fire":
-                tooltip = string.Format("     <color=#ffa500ff><size=20><b>技能：发射！</b></size></color>     \n" +
-                    "发射你的专属子弹\n" +
-                    "造成伤害\n" +
-                    "多少多少\n" +
-                    "技能描述");
+                string text= LocalizationMgr.Instance.GetWordByDirect(11);
+                tooltip = string.Format(text);
                 break;
         }
 
