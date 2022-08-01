@@ -58,6 +58,10 @@ public class SkillBase
     //被Update调用
     public virtual void Update()
     {
+        CoolDownUpdate();
+    }
+    private void CoolDownUpdate()
+	{
         if (IsCoolDown)
         {
             m_cdDuration += Time.deltaTime;

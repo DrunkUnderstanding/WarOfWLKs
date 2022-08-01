@@ -30,13 +30,20 @@ public class SoundManager : Singleton<SoundManager>
             audioClips.Add(clip.name, clip);
         }
 
+       
+    }
+	public void Init()
+	{
         LoadVolume();
-
+    }
+    public void AddSliderLisener(Slider musicSlider, Slider sfxSlider)
+	{
+        this.musicSlider = musicSlider;
+        this.sfxSlider = sfxSlider;
         musicSlider.onValueChanged.AddListener(delegate { UpdateVolume(); });
         sfxSlider.onValueChanged.AddListener(delegate { UpdateVolume(); });
     }
-
-    public void PlaySFX(string name)
+	public void PlaySFX(string name)
     {
         sfxSource.PlayOneShot(audioClips[name]);
     }
@@ -62,8 +69,8 @@ public class SoundManager : Singleton<SoundManager>
 
         musicSource.volume = PlayerPrefs.GetFloat("Music", 0.2f);
 
-        musicSlider.value = musicSource.volume;
+/*        musicSlider.value = musicSource.volume;
 
-        sfxSlider.value = sfxSource.volume;
+        sfxSlider.value = sfxSource.volume;*/
     }
 }

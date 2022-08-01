@@ -22,13 +22,13 @@ public class CtrlActor : Actor
     {
 
         base.Update();
-        GetMouseClick();
-        GetSkillClick();
+        MouseDownUpdate();
+        SkillKeyDownUpdate();
         //测试死亡需要，绑定技能
         m_readySkill = Skills[0];
     }
     //
-    void GetMouseClick()
+    private void MouseDownUpdate()
     {
         //设置在本地
         if (this.gameObject.tag == "Player1")
@@ -73,7 +73,7 @@ public class CtrlActor : Actor
     /// <summary>
     /// 获取玩家左键点击位置
     /// </summary>
-    private void GetMouse0Down()
+    public void GetMouse0Down()
     {
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())// !IsOnButtom
         {
@@ -108,7 +108,7 @@ public class CtrlActor : Actor
     /// <summary>
     /// 检测是否按下技能键
     /// </summary>
-    public void GetSkillClick()
+    public void SkillKeyDownUpdate()
     {
         //遍历绑定的技能列表获取Click信息
         foreach (SkillBase skill in Skills)

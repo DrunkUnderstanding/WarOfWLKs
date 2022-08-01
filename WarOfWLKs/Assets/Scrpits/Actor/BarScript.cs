@@ -54,13 +54,13 @@ public class BarScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleBar();
+        HandleBarUpdate();
     }
 
     /// <summary>
     /// 设置怪物的血条显示
     /// </summary>
-    private void HandleBar()
+    private void HandleBarUpdate()
     {
         if (m_fillAmount != m_content.fillAmount)
         {

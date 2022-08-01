@@ -43,10 +43,10 @@ public class CameraMovement : Singleton<CameraMovement>
     // Update is called once per frame
     void LateUpdate()
     {
-        if(GameManager.Instance.PlayerSelf!=null) CameraMove();
+        if(GameManager.Instance.PlayerSelf!=null) CameraMoveUpdate();
     }
 
-    private void CameraMove()
+    private void CameraMoveUpdate()
     {
         //this.transform.position = new Vector3(m_playerTransform.position.x, gameObject.transform.position.y, gameObject.transform.position.z);
 

@@ -121,7 +121,7 @@ public class Actor : MonoBehaviour
 
         MoveUpdate(m_destination);
 
-        HandleSkills();
+        SkillsUpdate();
 
         m_health.Initialize();
         //测试生命条的代码
@@ -139,7 +139,7 @@ public class Actor : MonoBehaviour
     /// <summary>
     /// 处理角色的释放技能CD、等信息
     /// </summary>
-    private void HandleSkills()
+    private void SkillsUpdate()
     {
         foreach (SkillBase skill in Skills)
         {

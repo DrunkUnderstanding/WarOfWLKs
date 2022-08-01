@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-public class LanguageManager : MonoBehaviour, INotification
+public class LanguageManager :  MonoBehaviour, INotification
 {
-    public Dropdown dropdown;
+    //public Dropdown dropdown;
     //public Text textCom;
 
     /// <summary>
@@ -11,16 +11,21 @@ public class LanguageManager : MonoBehaviour, INotification
     void Awake()
     {
         // PlayerPrefs.DeleteAll();
-        LocalizationMgr.Instance.Init();
+        //LocalizationMgr.Instance.Init();
     }
     private void Start()
     {
 /*        Refresh();
         LocalizationMgr.Instance.RefreshHander += Refresh;*/
-        dropdown.onValueChanged.AddListener(ChangeLanguage);
+       
         // textCom.text = LocalizationMgr.Instance.GetWordByDirect(1);
     }
-    public void ChangeLanguage(int language)
+	public  void AddLanguageListener(Dropdown dropdown)
+    {
+        dropdown.onValueChanged.AddListener(ChangeLanguage);
+
+    }
+	public void ChangeLanguage(int language)
     {
         // Debug.Log("ChangeLanguage:" + language);
         // var temp=language;

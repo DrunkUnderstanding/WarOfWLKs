@@ -26,7 +26,7 @@ public class Projectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MoveToTarget();
+        MoveUpdate();
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public class Projectile : MonoBehaviour
     /// <summary>
     /// 子弹移动到指定位置
     /// </summary>
-    private void MoveToTarget()
+    private void MoveUpdate()
     {
         if (m_moveDir != Vector2.zero)
         {
