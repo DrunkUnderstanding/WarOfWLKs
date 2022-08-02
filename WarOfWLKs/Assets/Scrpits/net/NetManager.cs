@@ -98,7 +98,13 @@ public static class NetManager
 		if (msgListeners.ContainsKey(msgName))
 		{
 			msgListeners[msgName] -= listener;
+			if (msgListeners[msgName] == null)
+			{
+				msgListeners.Remove(msgName);
+			}
 		}
+
+
 	}
 	//分发消息
 	private static void FireMsg(string msgName, MsgBase msgBase)
@@ -106,6 +112,7 @@ public static class NetManager
 		if (msgListeners.ContainsKey(msgName))
 		{
 			msgListeners[msgName](msgBase);
+			Debug.Log(msgBase);
 		}
 	}
 
@@ -131,6 +138,7 @@ public static class NetManager
 		//Connect
 		isConnecting = true;
 		socket.BeginConnect(ip, port, ConnectCallback, socket);
+		//ConnectSync(ip, port);
 	}
 
 	//初始化状态
@@ -161,7 +169,23 @@ public static class NetManager
 			AddMsgListener("MsgPong", OnMsgPong);
 		}
 	}
-
+/*	private static void ConnectSync(string ip, int port)
+	{
+		try
+		{
+			socket.Connect(ip, port);
+			Debug.Log("Socket Connect Succ ");
+			FireEvent(NetEvent.ConnectSucc, "");
+			isConnecting = false;
+			socket.BeginReceive(readBuff.bytes, readBuff.writeIdx, readBuff.remain, 0, ReceiveCallback, socket);
+		}
+		catch (SocketException ex)
+		{
+			Debug.Log("Socket Connect fail " + ex.ToString());
+			FireEvent(NetEvent.ConnectFail, ex.ToString());
+			isConnecting = false;
+		}
+	}*/
 	//Connect回调
 	private static void ConnectCallback(IAsyncResult ar)
 	{
@@ -182,9 +206,9 @@ public static class NetManager
 			Debug.Log("Socket Connect fail " + ex.ToString());
 			FireEvent(NetEvent.ConnectFail, ex.ToString());
 			isConnecting = false;
+			socket.Close();
 		}
 	}
-
 
 	//关闭连接
 	public static void Close()
@@ -206,6 +230,7 @@ public static class NetManager
 		//没有数据在发送
 		else
 		{
+			//socket.Shutdown(SocketShutdown.Both);
 			socket.Close();
 			FireEvent(NetEvent.Close, "");
 		}
@@ -276,7 +301,11 @@ public static class NetManager
 				ba = writeQueue.First();
 			else
 			{
-				if(isClosing) socket.Close();
+				if (isClosing)
+				{
+					//socket.Shutdown(SocketShutdown.Both);
+					socket.Close();
+				}
 				return;
 			}
 
@@ -301,6 +330,7 @@ public static class NetManager
 		//正在关闭
 		else if (isClosing)
 		{
+			//socket.Shutdown(SocketShutdown.Both);
 			socket.Close();
 		}
 	}
@@ -330,6 +360,7 @@ public static class NetManager
 		catch (SocketException ex)
 		{
 			Debug.Log("Socket Receive fail" + ex.ToString());
+			//socket.Close();
 		}
 	}
 

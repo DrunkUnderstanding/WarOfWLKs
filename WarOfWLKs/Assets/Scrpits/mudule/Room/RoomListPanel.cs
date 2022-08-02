@@ -90,7 +90,7 @@ public class RoomListPanel : BasePanel
 		//重新生成列表
 		if (msg.rooms == null)
 		{
-			return;
+   			return;
 		}
 		for (int i = 0; i < msg.rooms.Length; i++)
 		{
@@ -146,6 +146,7 @@ public class RoomListPanel : BasePanel
 	{
 		MsgEnterRoom msg = new MsgEnterRoom();
 		msg.id = int.Parse(idString);
+
 		NetManager.Send(msg);
 	}
 

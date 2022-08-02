@@ -39,16 +39,16 @@ public class GamingPanel : BasePanel
 
 
 		//事件监听
-		OnEnterBtn += OnStateShow;
-		OnExitBtn += OnStateClose;
-		AddEventTrigger(skillBtn1.transform, EventTriggerType.PointerEnter, OnEnterBtn);
-		AddEventTrigger(skillBtn1.transform, EventTriggerType.PointerExit, OnExitBtn);
-		AddEventTrigger(skillBtn2.transform, EventTriggerType.PointerEnter, OnEnterBtn);
-		AddEventTrigger(skillBtn2.transform, EventTriggerType.PointerExit, OnExitBtn);
-		AddEventTrigger(skillBtn3.transform, EventTriggerType.PointerEnter, OnEnterBtn);
-		AddEventTrigger(skillBtn3.transform, EventTriggerType.PointerExit, OnExitBtn);
-		AddEventTrigger(skillBtn4.transform, EventTriggerType.PointerEnter, OnEnterBtn);
-		AddEventTrigger(skillBtn4.transform, EventTriggerType.PointerExit, OnExitBtn);
+		OnPointerEnterBtn += OnStateShow;
+		OnPointerExitBtn += OnStateClose;
+		AddEventTrigger(skillBtn1.transform, EventTriggerType.PointerEnter, OnPointerEnterBtn);
+		AddEventTrigger(skillBtn1.transform, EventTriggerType.PointerExit, OnPointerExitBtn);
+		AddEventTrigger(skillBtn2.transform, EventTriggerType.PointerEnter, OnPointerEnterBtn);
+		AddEventTrigger(skillBtn2.transform, EventTriggerType.PointerExit, OnPointerExitBtn);
+		AddEventTrigger(skillBtn3.transform, EventTriggerType.PointerEnter, OnPointerEnterBtn);
+		AddEventTrigger(skillBtn3.transform, EventTriggerType.PointerExit, OnPointerExitBtn);
+		AddEventTrigger(skillBtn4.transform, EventTriggerType.PointerEnter, OnPointerEnterBtn);
+		AddEventTrigger(skillBtn4.transform, EventTriggerType.PointerExit, OnPointerExitBtn);
 
 	}
 
@@ -75,20 +75,9 @@ public class GamingPanel : BasePanel
 		Close();
 	}
 
-	/*为eventTrigger添加事件(参数1:添加事件的物体;参数2:事件类型;参数3:需要调用的事件函数)*/
-	public void AddEventTrigger(Transform insObject, EventTriggerType eventType, UnityAction<BaseEventData> myFunction)//泛型委托
-	{
-		EventTrigger eventTri = insObject.GetComponent<EventTrigger>();
 
-		EventTrigger.Entry entry = new EventTrigger.Entry();
-		entry.eventID = eventType;
-
-		entry.callback.AddListener(myFunction);
-		eventTri.triggers.Add(entry);
-	}
-
-	private UnityAction<BaseEventData> OnEnterBtn;
-	private UnityAction<BaseEventData> OnExitBtn;
+	private UnityAction<BaseEventData> OnPointerEnterBtn;
+	private UnityAction<BaseEventData> OnPointerExitBtn;
 	private void OnStateShow(BaseEventData p)
 	{
 		Show();
@@ -99,7 +88,7 @@ public class GamingPanel : BasePanel
 	}
 	private void Show()
 	{
-		PanelManager.Instance.Open<StatesPanel>("Fire!!!!!!");
+		PanelManager.Instance.Open<StatesPanel>(LocalizationMgr.Instance.GetWordByDirect(4));
 
 	}
 }

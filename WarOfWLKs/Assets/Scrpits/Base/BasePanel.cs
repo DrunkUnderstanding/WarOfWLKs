@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 public class BasePanel : MonoBehaviour
 {
@@ -34,6 +36,17 @@ public class BasePanel : MonoBehaviour
 	//关闭时
 	public virtual void OnClose()
 	{
+	}
+	/*为eventTrigger添加事件(参数1:添加事件的物体;参数2:事件类型;参数3:需要调用的事件函数)*/
+	public void AddEventTrigger(Transform insObject, EventTriggerType eventType, UnityAction<BaseEventData> myFunction)//泛型委托
+	{
+		EventTrigger eventTri = insObject.GetComponent<EventTrigger>();
+
+		EventTrigger.Entry entry = new EventTrigger.Entry();
+		entry.eventID = eventType;
+
+		entry.callback.AddListener(myFunction);
+		eventTri.triggers.Add(entry);
 	}
 
 }

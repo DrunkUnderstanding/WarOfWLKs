@@ -24,7 +24,7 @@ MonoBehaviour:
   - id: 5
     value: "\u91CD\u751F"
   - id: 6
-    value: "\u9000\u51FA\u6E38\u620F"
+    value: "\u767B\u51FA"
   - id: 7
     value: "\u52A0\u5165\u623F\u95F4"
   - id: 8
@@ -35,3 +35,21 @@ MonoBehaviour:
     value: "\u8FD4\u56DE\u4E3B\u83DC\u5355"
   - id: 11
     value: "\u4F60\u9A6C\u6495\u62C9"
+  - id: 12
+    value: "\u8BED\u8A00"
+  - id: 13
+    value: "\u7528\u6237\u540D"
+  - id: 14
+    value: "\u5BC6\u7801"
+  - id: 15
+    value: "\u767B\u5F55"
+  - id: 16
+    value: "\u6CE8\u518C"
+  - id: 17
+    value: "\u91CD\u590D\u5BC6\u7801"
+  - id: 18
+    value: "\u63D0\u793A"
+  - id: 19
+    value: "\u597D\u7684"
+  - id: 20
+    value: "\u7528\u6237\u540D\u5BC6\u7801\u9519\u8BEF"

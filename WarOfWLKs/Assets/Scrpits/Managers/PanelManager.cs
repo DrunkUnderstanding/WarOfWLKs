@@ -18,7 +18,7 @@ public class PanelManager : Singleton<PanelManager>
 	public static Transform root;
 	public static Transform canvas;
 	//初始化
-	public  void Init()
+	public void Init()
 	{
 		root = GameObject.Find("Root").transform;
 		canvas = root.Find("Canvas");
@@ -35,7 +35,11 @@ public class PanelManager : Singleton<PanelManager>
 		string name = typeof(T).ToString();
 		if (panels.ContainsKey(name))
 		{
-			return panels[name];
+			if (panels[name] != null) { 
+				var p = panels[name];
+				//p.OnShow(para);
+				return p;
+			}
 		}
 		//组件
 		BasePanel panel = root.gameObject.AddComponent<T>();
@@ -52,8 +56,9 @@ public class PanelManager : Singleton<PanelManager>
 	}
 
 	//关闭面板
-	public  void Close(string name)
+	public void Close(string name)
 	{
+		//Debug.LogError(name);
 		BasePanel panel = panels[name];
 		//没有打开
 		if (panel == null)

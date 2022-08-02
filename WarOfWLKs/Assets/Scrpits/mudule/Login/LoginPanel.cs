@@ -119,7 +119,7 @@ public class LoginPanel : BasePanel
 	public void OnMsgLogin(MsgBase msgBase)
 	{
 		MsgLogin msg = (MsgLogin)msgBase;
-		Debug.Log(msgBase + " " + msg.result);
+		//Debug.Log(msgBase + " " + msg.result);
 		if (msg.result == 0)
 		{
 			Debug.Log("登陆成功");

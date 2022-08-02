@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class DamageTile : TileScript
 {
-
+    private float damage = 2f;
     private void OnTriggerStay2D(Collider2D collision)
     {
-        collision.GetComponent<Actor>().HandleDamage(5f);
+        collision.GetComponent<Actor>().HandleDamage(damage);
     }
     private void OnCollisionStay2D(Collision2D collision)
     {

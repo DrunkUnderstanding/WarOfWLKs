@@ -40,6 +40,7 @@ public class RoomPanel : BasePanel
 		NetManager.AddMsgListener("MsgStartBattle", OnMsgStartBattle);
 		//发送查询
 		MsgGetRoomInfo msg = new MsgGetRoomInfo();
+		//Debug.Log(string.Format("<color=#ff0000>{0}</color>", "[Send] GetRoomInfo"));
 		NetManager.Send(msg);
 	}
 
@@ -107,6 +108,8 @@ public class RoomPanel : BasePanel
 	public void OnCloseClick()
 	{
 		MsgLeaveRoom msg = new MsgLeaveRoom();
+		PanelManager.Instance.Open<RoomListPanel>();
+
 		NetManager.Send(msg);
 	}
 
