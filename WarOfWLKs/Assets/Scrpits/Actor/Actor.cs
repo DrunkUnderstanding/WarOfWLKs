@@ -6,14 +6,21 @@ using UnityEngine.EventSystems;
 
 public class Actor : MonoBehaviour
 {
+    private GameObject skin;
+    //玩家ID
+    public string id = "";
+    //阵营
+    public int camp = 0;
 
     //玩家移动的速度
     [SerializeField]
     protected float m_actorSpeed;
 
+    //玩家的生命值条
     [SerializeField]
     public Stat m_health;
 
+    //已经准备好使用的技能
     protected SkillBase m_readySkill;
 
     //动画
@@ -40,6 +47,11 @@ public class Actor : MonoBehaviour
     public bool IsActive { get; set; }
     public float MaxSpeed { get; set; }
 
+    public virtual void Init(GameObject actorObj)
+	{
+        skin = actorObj;
+        ani = GetComponent<Animator>();
+    }
 
     /// <summary>
     /// 检测玩家移动方向,并调整方向
@@ -74,7 +86,7 @@ public class Actor : MonoBehaviour
             this.transform.GetChild(1).rotation = Quaternion.Euler(0, 0, 0);
         }
     }
-    private void MoveUpdate(Vector2 pos)
+    private void MoveUpdate()
     {
         //移动
         //移动向量！=（0,0）才能说明有地方可以去，不然就是点自己脚底板了
@@ -107,7 +119,7 @@ public class Actor : MonoBehaviour
         ani = this.gameObject.GetComponent<Animator>();
 
         //游戏开始时绑定技能给Actor
-        Skills.Add(new FireSkill(this));
+        Skills.Add(new FireSkill());
 
         m_health.Bar.Reset();
 
@@ -119,7 +131,7 @@ public class Actor : MonoBehaviour
     {
         //Debug.Log(Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
-        MoveUpdate(m_destination);
+        MoveUpdate();
 
         SkillsUpdate();
 
@@ -147,23 +159,26 @@ public class Actor : MonoBehaviour
         }
     }
 
-
+    public bool IsDie()
+	{
+        return m_health.CurrentVal <= 0;
+	}
     /// <summary>
     /// 处理角色受伤信息
     /// </summary>
     /// <param name="damage"></param>
     public void HandleDamage(float damage)
     {
-        Debug.Log(this.tag);
+        //Debug.Log(this.tag);
         this.m_health.CurrentVal -= damage * Time.deltaTime;
         //死亡
-        if (m_health.CurrentVal <= 0)
+        if (IsDie())
         {
 
-            if (this.tag == "Player1")
+/*            if (this.tag == "Player1")
             {
                 GameManager.Instance.ShowDie(true);
-            }
+            }*/
 
             Release();
         }
@@ -200,7 +215,7 @@ public class Actor : MonoBehaviour
     }
 
     /// <summary>
-    /// 释放当前 Actor，并且将当前 Monster 放入 Pool
+    /// 释放当前 Actor，并且将当前 Actor 放入 Pool
     /// </summary>
     public void Release()
     {
@@ -217,6 +232,21 @@ public class Actor : MonoBehaviour
 
 
     }
+    /// <summary>
+    /// 释放技能
+    /// </summary>
+    /// <param name="skillPos">//暂时不需要使用技能要到达的位置</param>
+    public virtual Vector2  CastSkill(Vector2 skillPos)
+    {
+        Projectile projectile = GameManager.Instance.Pool.GetObject(m_readySkill.ProjName).GetComponent<Projectile>();
+
+        Vector2 skillMoveVec = new Vector2(skillPos.x - this.transform.position.x, skillPos.y - this.transform.position.y);
+        
+        projectile.InitPorjectile(this.gameObject, skillMoveVec.normalized, skillPos, m_readySkill.CastDistance, m_readySkill.ProjSpeed, m_readySkill);
+
+        return skillMoveVec;
+    }
+
     public void Rebirth()
     {
         //当我们需要重新启用当前资源时，将这个资源的初始位置设置到GridPosition

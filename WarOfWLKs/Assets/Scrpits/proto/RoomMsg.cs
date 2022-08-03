@@ -76,3 +76,4 @@ public class MsgStartBattle : MsgBase
 	//服务端回
 	public int result = 0;
 }
+

@@ -54,7 +54,7 @@ public class GamingPanel : BasePanel
 
 	public void OnSkill1Click()
 	{
-		CtrlActor ctrlActor = GameManager.m_playerSelf;
+		CtrlActor ctrlActor = GameManager.Instance.PlayerSelf.GetComponent<CtrlActor>();
 		ctrlActor.CastReady(ctrlActor.Skills[0]);
 	}
 	public void OnSkill2Click()

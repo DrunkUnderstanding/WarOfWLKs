@@ -165,14 +165,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41b32307e7b020a4293955c1ab3aa8c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 
+  camp: 0
   m_actorSpeed: 1
-  m_skillRange: {fileID: 2154509797567095212}
   m_health:
     bar: {fileID: 1664413688443583428}
     maxVal: 100
     m_healthTxt: {fileID: 35849402023577390}
     currentVal: 100
   m_destination: {x: 0, y: 0}
+  m_skillRange: {fileID: 2154509797567095212}
 --- !u!1 &2154509797567095212
 GameObject:
   m_ObjectHideFlags: 0

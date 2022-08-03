@@ -6,7 +6,7 @@ public class Projectile : MonoBehaviour
 
     private SkillBase m_skill;
 
-    private Actor parent;
+    private GameObject  parent;
 
     private Vector3 m_targetPos;
 
@@ -37,7 +37,7 @@ public class Projectile : MonoBehaviour
     /// <param name="targetPos">子弹移动到的位置</param>
     /// <param name="castDistance">技能施法距离</param>
     /// <param name="projSpeed">技能（子弹）移动速度</param>
-    public void InitPorjectile(Actor parent, Vector2 moveDir, Vector2 targetPos, float castDistance, float projSpeed, SkillBase skill)
+    public void InitPorjectile(GameObject parent, Vector2 moveDir, Vector2 targetPos, float castDistance, float projSpeed, SkillBase skill)
     {
         //记录父亲（可能需要计分功能）
         this.parent = parent;
@@ -102,14 +102,40 @@ public class Projectile : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        if (collision.gameObject == this.parent.gameObject) return;
 
-        if (collision.tag == "Player2" && collision.gameObject != this.parent.gameObject)
+        if (collision.tag == "Player2")
         {
             Debug.Log(collision);
-            collision.gameObject.GetComponent<Actor>().HandleDamage(m_skill.Damage, m_skill);
-            collision.gameObject.GetComponent<Actor>().KnockBack(this.gameObject.transform.position,m_skill);
+            //被击中的角色
+            Actor hitActor = collision.gameObject.GetComponent<Actor>();
+            hitActor.HandleDamage(m_skill.Damage, m_skill);
+            hitActor.KnockBack(this.gameObject.transform.position,m_skill);
+            //参与射击的角色
+            Actor actor = parent.GetComponent<Actor>();
+            SendMsgHit(actor, hitActor);
             this.gameObject.SetActive(false);
         }
 
     }
+    private void SendMsgHit(Actor actor,Actor hitActor)
+	{
+        if(hitActor==null || actor == null)
+		{
+            return;
+		}
+        //不是自己发的击中
+        if(actor.id != GameManager.Instance.ctrllerId)
+		{
+            return;
+		}
+        //发消息
+        MsgHit msg = new MsgHit();
+        msg.targetId = hitActor.id;
+        msg.id = actor.id;
+        msg.x = transform.position.x;
+        msg.y = transform.position.y;
+
+        NetManager.Send(msg);
+	}
 }

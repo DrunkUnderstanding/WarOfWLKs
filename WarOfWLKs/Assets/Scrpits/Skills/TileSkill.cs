@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TileSkill : SkillBase
 {
-    public TileSkill(Actor target) : base(target)
+    public TileSkill(Actor target) : base()
     {
         //this.CoolDown = 3;
         //技能ID

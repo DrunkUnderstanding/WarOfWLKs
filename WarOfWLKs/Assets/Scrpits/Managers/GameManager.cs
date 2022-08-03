@@ -11,7 +11,7 @@ public class GameManager : Singleton<GameManager>
 	public static int curLanguage = 1;
 
 	[SerializeField]
-	public static CtrlActor m_playerSelf;
+	private GameObject m_playerSelf;
 
 	[SerializeField]
 	private GameObject m_diedPanel;
@@ -23,7 +23,7 @@ public class GameManager : Singleton<GameManager>
 	private Camera m_mainCamera;
 
 	public ObjectPool Pool { get; set; }
-	public CtrlActor PlayerSelf { get => m_playerSelf; set => m_playerSelf = value; }
+	public GameObject PlayerSelf { get => m_playerSelf; set => m_playerSelf = value; }
 	public bool IsPlaying { get => b_isPlaying; set => b_isPlaying = value; }
 
 	private bool b_isPlaying = false;
@@ -44,31 +44,23 @@ public class GameManager : Singleton<GameManager>
 		NetManager.AddMsgListener("MsgKick", OnMsgKick);
 		//初始化
 		PanelManager.Instance.Init();
+		BattleManager.Instance.Init();
 		//打开登陆面板
 		PanelManager.Instance.Open<LoginPanel>();
 	}
 	public void RebirthClick()
 	{
 
-		PlayerSelf.Rebirth();
+		PlayerSelf.GetComponent<CtrlActor>().Rebirth();
 	}
 	public void OnClickQ()
 	{
-		if (!PlayerSelf.Skills[0].IsCoolDown)
+		CtrlActor actor = PlayerSelf.GetComponent<CtrlActor>();
+		if (actor.Skills[0].IsCoolDown)
 		{
-			PlayerSelf.CastReady(PlayerSelf.Skills[0]);
+			actor.CastReady(actor.Skills[0]);
 		}
 
-	}
-	public void MouseEnter()
-	{
-		PlayerSelf.IsOnButtom = true;
-		//Debug.Log(m_playerSelf.IsOnButtom);
-	}
-	public void MouseLeave()
-	{
-		PlayerSelf.IsOnButtom = false;
-		// Debug.Log(m_playerSelf.IsOnButtom);
 	}
 
 	/// <summary>
@@ -89,22 +81,23 @@ public class GameManager : Singleton<GameManager>
 		//m_skillPanel.SetActive(true);
 		//m_setBtn.gameObject.SetActive(true);
 		m_mainCamera.gameObject.SetActive(true);
-		CameraMovement.Instance.SetFollowDestination();
 
-		PlayerSelf = GameObject.FindGameObjectWithTag("Player1").GetComponent<CtrlActor>();
-		
+		CameraMovement.Instance.Init();
+
+		PlayerSelf = GameObject.FindGameObjectWithTag("Player1");
+
 		//m_startMenu.SetActive(false);
 	}
 
-	public void QuitGame()
-	{
-		Application.Quit();
-	}
+	/*	public void QuitGame()
+		{
+			Application.Quit();
+		}
 
-	public void JoinRoom()
-	{
+		public void JoinRoom()
+		{
 
-	}
+		}*/
 	void Update()
 	{
 		NetManager.Update();

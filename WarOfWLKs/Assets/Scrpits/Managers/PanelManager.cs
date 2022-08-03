@@ -35,7 +35,8 @@ public class PanelManager : Singleton<PanelManager>
 		string name = typeof(T).ToString();
 		if (panels.ContainsKey(name))
 		{
-			if (panels[name] != null) { 
+			if (panels[name] != null)
+			{
 				var p = panels[name];
 				//p.OnShow(para);
 				return p;
@@ -59,7 +60,9 @@ public class PanelManager : Singleton<PanelManager>
 	public void Close(string name)
 	{
 		//Debug.LogError(name);
-		BasePanel panel = panels[name];
+		BasePanel panel;
+		if (panels.ContainsKey(name)) panel = panels[name];
+		else return;
 		//没有打开
 		if (panel == null)
 		{

@@ -6,7 +6,7 @@ public class FireSkill : SkillBase
 {
 
 
-    public FireSkill(Actor target) : base(target)
+    public FireSkill() : base()
     {
         this.CoolDown = 3;
         //技能ID

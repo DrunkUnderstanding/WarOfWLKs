@@ -48,9 +48,9 @@ public class SkillBase
     public int Damage { get => m_damage; set => m_damage = value; }
     public float KnockBackDistance { get => knockBackDistance; set => knockBackDistance = value; }
 
-    public SkillBase(Actor player)
+    public SkillBase()
     {
-        m_player = player;
+        
     }
     //技能特效
     //private GameObject m_selfEffect;

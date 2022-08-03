@@ -11,25 +11,24 @@ public class LevelManager : Singleton<LevelManager>
 
     //所有Tile的父节点Map物件节点
     [SerializeField]
-    private Transform m_tileFather;
+    private Transform m_tilesFather;
 
+    //所有Actor的父节点Actors物件节点
     [SerializeField]
     private Transform m_actorsFather;
 
-    private Point[] m_birthPoint;
-
     [SerializeField]
-    private CameraMovement m_cameraMovement;    //摄像头移动脚本
+    private Point[] m_birthPoints;
 
     /// <summary>
     /// 获取出生点位置，禁止外界修改
     /// </summary>
     public Point[] BirthPoint
     {
-        get => m_birthPoint;
+        get => m_birthPoints;
         private set
         {
-            this.m_birthPoint = value;
+            this.m_birthPoints = value;
         }
     }
 
@@ -103,13 +102,13 @@ public class LevelManager : Singleton<LevelManager>
 
         maxTile = Tiles[new Point(mapX - 1, mapY - 1)].transform.position;
 
-        m_cameraMovement.SetLimits(new Vector3(maxTile.x + TileSize, maxTile.y - TileSize));
+        CameraMovement.Instance.SetLimits(new Vector3(maxTile.x + TileSize, maxTile.y - TileSize));
 
         //设置出生点
-        m_birthPoint = SetBirthPoint(birData);
+        m_birthPoints = SetBirthPoint(birData);
 
 
-        //创建游戏角色
+/*        //创建游戏角色
         GameObject syncPlayer = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/SyncMaskAborigine");
         syncPlayer = GameObject.Instantiate(syncPlayer);
         syncPlayer.transform.position = Tiles[BirthPoint[0]].transform.position;
@@ -120,7 +119,7 @@ public class LevelManager : Singleton<LevelManager>
         ctrlPlayer = GameObject.Instantiate(ctrlPlayer);
         ctrlPlayer.transform.position = LevelManager.Instance.Tiles[BirthPoint[1]].transform.position;
         ctrlPlayer.transform.SetParent(m_actorsFather);
-
+*/
     }
 
     /// <summary>
@@ -155,7 +154,7 @@ public class LevelManager : Singleton<LevelManager>
         TileScript newTile = Instantiate(m_tilePrefabs[tileIndex]).GetComponent<TileScript>();
 
         //修改positon,Point的位置
-        newTile.Setup(new Point(x, y), new Vector3(worldStart.x + (TileSize * x), worldStart.y - (TileSize * y), 0), m_tileFather);
+        newTile.Setup(new Point(x, y), new Vector3(worldStart.x + (TileSize * x), worldStart.y - (TileSize * y), 0), m_tilesFather);
 
     }
 
