@@ -40,7 +40,7 @@ public class CtrlActor : Actor
 		MsgSkill msg = new MsgSkill();
 		msg.VecX = vector2.x;
 		msg.VecY = vector2.y;
-
+		Debug.Log(vector2);
 		NetManager.Send(msg);
 	}
 	public void SyncUpdate()
@@ -63,6 +63,8 @@ public class CtrlActor : Actor
 	private void MouseDownUpdate()
 	{
 		if (IsDie()) return;
+		//如果点到的位置是UI则直接return
+		if (EventSystem.current.IsPointerOverGameObject()) return;
 		GetMouse0Down();
 		GetMouse1Down();
 	}
@@ -73,7 +75,7 @@ public class CtrlActor : Actor
 	{
 		if (b_isKnocked) return;
 		//如果按下鼠标右键（0是左键、1是右键）
-		if (Input.GetMouseButtonDown(1) && !EventSystem.current.IsPointerOverGameObject())
+		if (Input.GetMouseButtonDown(1))
 		{
 			//向鼠标点击的位置发射射线
 			m_destination = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -106,7 +108,7 @@ public class CtrlActor : Actor
 	/// </summary>
 	public void GetMouse0Down()
 	{
-		if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())// !IsOnButtom
+		if (Input.GetMouseButtonDown(0))// !IsOnButtom
 		{
 			if (b_isPrepareCast)
 			{
@@ -146,7 +148,7 @@ public class CtrlActor : Actor
 		m_readySkill.IsCoolDown = true;
 		m_skillRange.SetActive(false);
 		b_isPrepareCast = false;
-		SkillUpdate(skillMoveVec);
+		SkillUpdate(skillPos);
 		return skillMoveVec;
 
 	}

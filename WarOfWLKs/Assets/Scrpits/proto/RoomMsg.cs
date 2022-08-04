@@ -77,3 +77,12 @@ public class MsgStartBattle : MsgBase
 	public int result = 0;
 }
 
+//准备
+public class MsgIsReady : MsgBase
+{
+	public MsgIsReady() { protoName = "MsgIsReady"; }
+	public bool isReady = false;
+	//服务端补充
+	public string id = "";
+}
+

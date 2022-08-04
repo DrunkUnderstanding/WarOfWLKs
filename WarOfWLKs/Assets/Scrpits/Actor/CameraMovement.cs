@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class CameraMovement : Singleton<CameraMovement>
 {
-
+	DiedPanel diedPanel = null;
 	//镜头的x，y可以移动的最大距离
 	private float m_xMax;
 	private float m_yMin;
 
 	[SerializeField]
 	//相机跟随的玩家节点
-	private Transform m_playerTransform = null;
+	private Transform m_followerTransform = null;
 
+	private Actor m_follower = null;
 	//设定一个角色能看到的最远值
 
 	[SerializeField]
@@ -35,43 +36,73 @@ public class CameraMovement : Singleton<CameraMovement>
 	public void Init()
 	{
 		//获取当前角色的transform
-		m_playerTransform = GameManager.Instance.PlayerSelf.gameObject.transform;
+		m_followerTransform = GameManager.Instance.PlayerSelf.gameObject.transform;
+		m_follower = m_followerTransform.gameObject.GetComponent<Actor>();
 		//Debug.Log(m_playerTransform);
 	}
 
 	// Update is called once per frame
 	void LateUpdate()
 	{
-		if (m_playerTransform) CameraMoveUpdate();
-	}
 
+		if (m_followerTransform)
+		{
+			if (m_follower.IsDie()) CameraTrans();
+			CameraMoveUpdate();
+		}
+	}
+	//控制人物死亡后改变相机跟随
+	public void CameraTrans()
+	{
+		Transform cameraFollower = null;
+		//打开死亡界面
+		if (diedPanel == null)
+		{
+			if (!BattleManager.hasFinished) diedPanel = (DiedPanel)PanelManager.Instance.Open<DiedPanel>();
+		}
+
+		foreach (Actor actor in BattleManager.actors.Values)
+		{
+			if (!actor.IsDie())
+			{
+				cameraFollower = actor.transform;
+			}
+		}
+		if (cameraFollower == null)
+		{
+			return;
+		}
+		m_followerTransform = cameraFollower;
+		m_follower = m_followerTransform.gameObject.GetComponent<Actor>();
+		diedPanel.ChangeFollowerText(m_follower.id);
+	}
 	private void CameraMoveUpdate()
 	{
 		//this.transform.position = new Vector3(m_playerTransform.position.x, gameObject.transform.position.y, gameObject.transform.position.z);
 
-		targetPos = new Vector3(m_playerTransform.position.x, m_playerTransform.transform.position.y, gameObject.transform.position.z);
+		targetPos = new Vector3(m_followerTransform.position.x, m_followerTransform.transform.position.y, gameObject.transform.position.z);
 
-		if (m_playerTransform.position.x > 0f)
+		if (m_followerTransform.position.x > 0f)
 		{
-			if (m_playerTransform.position.y > 0f)
+			if (m_followerTransform.position.y > 0f)
 			{
-				targetPos = new Vector3(m_playerTransform.position.x + Ahead, m_playerTransform.position.y + Ahead, gameObject.transform.position.z);
+				targetPos = new Vector3(m_followerTransform.position.x + Ahead, m_followerTransform.position.y + Ahead, gameObject.transform.position.z);
 			}
-			else if (m_playerTransform.position.y < 0f)
+			else if (m_followerTransform.position.y < 0f)
 			{
-				targetPos = new Vector3(m_playerTransform.position.x + Ahead, m_playerTransform.position.y - Ahead, gameObject.transform.position.z);
+				targetPos = new Vector3(m_followerTransform.position.x + Ahead, m_followerTransform.position.y - Ahead, gameObject.transform.position.z);
 			}
 
 		}
 		else
 		{
-			if (m_playerTransform.position.y > 0f)
+			if (m_followerTransform.position.y > 0f)
 			{
-				targetPos = new Vector3(m_playerTransform.position.x - Ahead, m_playerTransform.position.y + Ahead, gameObject.transform.position.z);
+				targetPos = new Vector3(m_followerTransform.position.x - Ahead, m_followerTransform.position.y + Ahead, gameObject.transform.position.z);
 			}
-			else if (m_playerTransform.position.y < 0f)
+			else if (m_followerTransform.position.y < 0f)
 			{
-				targetPos = new Vector3(m_playerTransform.position.x - Ahead, m_playerTransform.position.y - Ahead, gameObject.transform.position.z);
+				targetPos = new Vector3(m_followerTransform.position.x - Ahead, m_followerTransform.position.y - Ahead, gameObject.transform.position.z);
 			}
 
 		}

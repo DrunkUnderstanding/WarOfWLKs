@@ -28,7 +28,7 @@ MonoBehaviour:
   - id: 7
     value: JoinRoom
   - id: 8
-    value: "\u91CD\u590D\u5BC6\u7801"
+    value: GameIntro
   - id: 9
     value: W<size=5>ar</size>O<size=5>f</size>W<size=5>lks</size>
   - id: 10

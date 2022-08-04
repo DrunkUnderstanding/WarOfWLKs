@@ -31,22 +31,23 @@ public class StartPanel : BasePanel
 		quitGameBtn = skin.transform.Find("PanelImage/Panel/QuitGameBtn").GetComponent<Button>();
 
 		//监听
-		trailBtn.onClick.AddListener(OnTrailClick);
+		trailBtn.onClick.AddListener(OnIntroClick);
 		joinRoomBtn.onClick.AddListener(OnJoinRoomClick);
 		settingBtn.onClick.AddListener(OnSettingClick);
-		quitGameBtn.onClick.AddListener(OnLogOutClick);
+		quitGameBtn.onClick.AddListener(OnLogoutClick);
+
+		//网络监听
+		NetManager.AddMsgListener("MsgLogout", OnMsgLogout);
 	}
 
 	public override void OnClose()
 	{
-
+		NetManager.RemoveMsgListener("MsgLogout", OnMsgLogout);
 	}
-	public void OnTrailClick()
+	public void OnIntroClick()
 	{
 		//开始游戏
-		GameManager.Instance.StartGame();
-		PanelManager.Instance.Open<GamingPanel>();
-		Close();
+		PanelManager.Instance.Open<TipPanel>("这是个往别人脸上糊球球的游戏");
 	}
 	public void OnJoinRoomClick()
 	{
@@ -58,13 +59,30 @@ public class StartPanel : BasePanel
 	{
 		//打开设置面板
 		PanelManager.Instance.Open<SettingPanel>();
-		Close();
+		//Close();
 	}
-	public void OnLogOutClick()
+	public void OnLogoutClick()
 	{
-		PanelManager.Instance.Open<LoginPanel>();
-		Close();
 		//发送下线消息
+		MsgLogout msg = new MsgLogout();
+		msg.id = GameManager.Instance.ctrllerId;
+		NetManager.Send(msg);
 	}
 
+	//登出消息返回
+	public void OnMsgLogout(MsgBase msgBase)
+	{
+		MsgLogout msg = (MsgLogout)msgBase;
+		if (msg.result == 1)
+		{
+			PanelManager.Instance.Open<TipPanel>("登出失败！");
+			return;
+		}
+		//关闭连接
+		NetManager.Close();
+		PanelManager.Instance.Open<LoginPanel>();
+		PanelManager.Instance.Open<TipPanel>("登出成功！");
+
+		Close();
+	}
 }

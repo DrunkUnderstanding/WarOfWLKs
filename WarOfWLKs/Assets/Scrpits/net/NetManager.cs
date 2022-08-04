@@ -112,7 +112,7 @@ public static class NetManager
 		if (msgListeners.ContainsKey(msgName))
 		{
 			msgListeners[msgName](msgBase);
-			Debug.Log(msgBase);
+			//Debug.Log(msgBase);
 		}
 	}
 

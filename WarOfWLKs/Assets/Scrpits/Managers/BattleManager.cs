@@ -5,6 +5,12 @@ using UnityEngine;
 public class BattleManager : Singleton<BattleManager>
 {
 	public static Dictionary<string, Actor> actors = new Dictionary<string, Actor>();
+
+	public Transform actortsFather;
+
+	public static bool hasFinished = false;
+
+	public static bool hasCreateLevel = false;
 	public void Init()
 	{
 		NetManager.AddMsgListener("MsgEnterBattle", OnMsgEnterBattle);
@@ -14,8 +20,29 @@ public class BattleManager : Singleton<BattleManager>
 		NetManager.AddMsgListener("MsgSyncActor", OnMsgSyncActor);
 		NetManager.AddMsgListener("MsgSkill", OnMsgSkill);
 		NetManager.AddMsgListener("MsgHit", OnMsgHit);
+		NetManager.AddMsgListener("MsgDie", OnMsgDie);
+	}
+	public void OnMsgDie(MsgBase msgBase)
+	{
+		MsgDie msg = (MsgDie)msgBase;
+		Actor actor = GetActor(msg.id);
+		if (actor == null) return;
+		if (actor.IsDie()) return;
+		actor.m_health.CurrentVal = 0;
+		if (this.tag == "Player1")
+		{
+			GameManager.Instance.ShowDiePanel(true);
+		}
+		actor.Release();
 	}
 
+	public void DestoryActors()
+	{
+		for (int i = 0; i < actortsFather.childCount; i++)
+		{
+			Destroy(actortsFather.GetChild(i).gameObject);
+		}
+	}
 	public void AddActor(string id, Actor actor)
 	{
 		actors[id] = actor;
@@ -64,7 +91,7 @@ public class BattleManager : Singleton<BattleManager>
 
 		//打开游玩过程中的界面
 		PanelManager.Instance.Open<GamingPanel>();
-		GameManager.Instance.IsPlaying = true;
+		hasFinished = false;
 		//产生角色
 		for (int i = 0; i < msg.actors.Length; i++)
 		{
@@ -73,15 +100,19 @@ public class BattleManager : Singleton<BattleManager>
 
 		//设置摄像头
 		CameraMovement.Instance.Init();
+
 		//产生地图
-		LevelManager.Instance.CreateLevel();
+		if (!hasCreateLevel)
+		{
+			LevelManager.Instance.CreateLevel();
+			hasCreateLevel = true;
+		}
+
 	}
 	//生成角色
 	public void GenerateActor(ActorInfo actorInfo)
 	{
 		string objName = "Actor_" + actorInfo.id;
-		GameObject actorNameObj = new GameObject(objName);
-
 		//创建游戏实体
 		GameObject actorObj;
 		if (actorInfo.id == GameManager.Instance.ctrllerId)
@@ -134,6 +165,10 @@ public class BattleManager : Singleton<BattleManager>
 		{
 			isWin = true;
 		}
+		//游戏是否结束
+		hasFinished = true;
+		//关闭死亡界面
+		PanelManager.Instance.Close("DiedPanel");
 		//显示胜利
 		PanelManager.Instance.Open<ResultPanel>(isWin);
 	}
@@ -180,7 +215,7 @@ public class BattleManager : Singleton<BattleManager>
 	{
 		MsgHit msg = (MsgHit)msgBase;
 
-		SyncActor actor = (SyncActor)GetActor(msg.targetId);
+		Actor actor = (Actor)GetActor(msg.targetId);
 		if (actor == null) return;
 		actor.SyncHit(msg);
 

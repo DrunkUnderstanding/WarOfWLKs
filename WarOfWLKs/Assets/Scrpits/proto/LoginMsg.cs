@@ -21,6 +21,15 @@ public class MsgLogin : MsgBase
 	public int result = 0;
 }
 
+//登出
+public class MsgLogout : MsgBase
+{
+	public MsgLogout() { protoName = "MsgLogout"; }
+
+	public string id = "";
+	//服务端回（0-成功，1-失败）
+	public int result = 0;
+}
 
 //踢下线（服务端推送）
 public class MsgKick : MsgBase

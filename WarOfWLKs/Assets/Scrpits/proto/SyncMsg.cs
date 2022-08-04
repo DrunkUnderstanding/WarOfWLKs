@@ -39,3 +39,16 @@ public class MsgHit : MsgBase
 	public int hp = 0;          //被击中坦克血量
 	public int damage = 0;      //受到的伤害
 }
+public class MsgBurned : MsgBase
+{
+	public MsgBurned() { protoName = "MsgBurned"; }
+	public string id = "";  //哪个人被烧
+	public float damage = 0; //受到的伤害
+	public int hp = 0;          //被烧的人的血量
+}
+
+public class MsgDie : MsgBase
+{
+	public MsgDie() { protoName = "MsgDie"; }
+	public string id = "";
+}

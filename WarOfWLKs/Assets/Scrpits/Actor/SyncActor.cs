@@ -14,17 +14,13 @@ public class SyncActor : Actor
 	public override void Init(GameObject actorObj)
 	{
 		base.Init(actorObj);
-		//设置物理运动影响
-		Rigidbody2D rigidbody = GetComponent<Rigidbody2D>();
-		rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
-		rigidbody.simulated = false;
+		lastPos = new Vector2(transform.position.x, transform.position.y);
+		/*		//设置物理运动影响
+				Rigidbody2D rigidbody = GetComponent<Rigidbody2D>();
+				rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
+				rigidbody.simulated = false;*/
 	}
-	public void SyncHit(MsgHit msg)
-	{
-		HandleDamage(msg.damage, new FireSkill());
-		Vector3 vector3 = new Vector3(msg.x, msg.y, 0);
-		KnockBack(vector3, new FireSkill());
-	}
+
 	public void SyncPos(MsgSyncActor msg)
 	{
 		Vector2 destination = new Vector2(msg.x, msg.y);

@@ -17,9 +17,6 @@ public class GameManager : Singleton<GameManager>
 	private GameObject m_diedPanel;
 
 	[SerializeField]
-	private Button m_reBirthBtn;
-
-	[SerializeField]
 	private Camera m_mainCamera;
 
 	public ObjectPool Pool { get; set; }
@@ -66,14 +63,18 @@ public class GameManager : Singleton<GameManager>
 	/// <summary>
 	/// 显示死亡提示
 	/// </summary>
-	public void ShowDie(bool setShow)
+	public void ShowDiePanel(bool setShow)
 	{
 		m_diedPanel.SetActive(setShow);
-		m_reBirthBtn.gameObject.SetActive(setShow);
+		//m_reBirthBtn.gameObject.SetActive(setShow);
 	}
 	// Update is called once per frame
 
 
+	
+	/// <summary>
+	/// 弃用
+	/// </summary>
 	public void StartGame()
 	{
 		LevelManager.Instance.CreateLevel();

@@ -7,12 +7,16 @@ public class RoomPanel : BasePanel
 {
 	//开战按钮
 	private Button startButton;
+	//准备按钮
+	private Button readyButton;
 	//退出按钮
 	private Button closeButton;
 	//列表容器
 	private Transform content;
 	//玩家信息物体
 	private GameObject playerObj;
+	//玩家准备状态
+	private Dictionary<string, Text> playerReadyTexts = new Dictionary<string, Text>();
 
 	//初始化
 	public override void OnInit()
@@ -27,6 +31,7 @@ public class RoomPanel : BasePanel
 		//寻找组件
 		startButton = skin.transform.Find("CtrlPanel/StartButton").GetComponent<Button>();
 		closeButton = skin.transform.Find("CtrlPanel/CloseButton").GetComponent<Button>();
+		readyButton = skin.transform.Find("CtrlPanel/ReadyButton").GetComponent<Button>();
 		content = skin.transform.Find("ListPanel/Scroll View/Viewport/Content");
 		playerObj = skin.transform.Find("Player").gameObject;
 		//不激活玩家信息
@@ -34,10 +39,12 @@ public class RoomPanel : BasePanel
 		//按钮事件
 		startButton.onClick.AddListener(OnStartClick);
 		closeButton.onClick.AddListener(OnCloseClick);
+		readyButton.onClick.AddListener(OnReadyClick);
 		//协议监听
 		NetManager.AddMsgListener("MsgGetRoomInfo", OnMsgGetRoomInfo);
 		NetManager.AddMsgListener("MsgLeaveRoom", OnMsgLeaveRoom);
 		NetManager.AddMsgListener("MsgStartBattle", OnMsgStartBattle);
+		NetManager.AddMsgListener("MsgIsReady", OnMsgIsReady);
 		//发送查询
 		MsgGetRoomInfo msg = new MsgGetRoomInfo();
 		//Debug.Log(string.Format("<color=#ff0000>{0}</color>", "[Send] GetRoomInfo"));
@@ -51,6 +58,7 @@ public class RoomPanel : BasePanel
 		NetManager.RemoveMsgListener("MsgGetRoomInfo", OnMsgGetRoomInfo);
 		NetManager.RemoveMsgListener("MsgLeaveRoom", OnMsgLeaveRoom);
 		NetManager.RemoveMsgListener("MsgStartBattle", OnMsgStartBattle);
+		NetManager.RemoveMsgListener("MsgIsReady", OnMsgIsReady);
 	}
 
 	//收到玩家列表协议
@@ -63,6 +71,8 @@ public class RoomPanel : BasePanel
 			GameObject o = content.GetChild(i).gameObject;
 			Destroy(o);
 		}
+		//清除玩家准备列表的信息
+		playerReadyTexts.Clear();
 		//重新生成列表
 		if (msg.players == null)
 		{
@@ -87,15 +97,18 @@ public class RoomPanel : BasePanel
 		Text idText = trans.Find("IdText").GetComponent<Text>();
 		Text campText = trans.Find("CampText").GetComponent<Text>();
 		Text scoreText = trans.Find("ScoreText").GetComponent<Text>();
+		Text readyText = trans.Find("ReadyText").GetComponent<Text>();
+		//生成玩家准备列表的信息
+		playerReadyTexts[playerInfo.id] = readyText;
 		//填充信息
 		idText.text = playerInfo.id;
 		if (playerInfo.camp == 1)
 		{
-			campText.text = "红";
+			campText.text = "<color=red>Red</color>";
 		}
 		else
 		{
-			campText.text = "蓝";
+			campText.text = "<color=blue>Blue</color>";
 		}
 		if (playerInfo.isOwner == 1)
 		{
@@ -104,15 +117,13 @@ public class RoomPanel : BasePanel
 		scoreText.text = playerInfo.score.ToString();
 	}
 
-	//点击退出按钮
-	public void OnCloseClick()
+	public void OnMsgIsReady(MsgBase msgBase)
 	{
-		MsgLeaveRoom msg = new MsgLeaveRoom();
-		PanelManager.Instance.Open<RoomListPanel>();
-
-		NetManager.Send(msg);
+		MsgIsReady msg = (MsgIsReady)msgBase;
+		//显示玩家准备好了的信息
+		Text text = playerReadyTexts[msg.id];
+		text.gameObject.SetActive(msg.isReady);
 	}
-
 	//收到退出房间协议
 	public void OnMsgLeaveRoom(MsgBase msgBase)
 	{
@@ -137,15 +148,38 @@ public class RoomPanel : BasePanel
 		MsgStartBattle msg = new MsgStartBattle();
 		NetManager.Send(msg);
 	}
+	//点击退出按钮
+	public void OnCloseClick()
+	{
+		MsgLeaveRoom msg = new MsgLeaveRoom();
+		LevelManager.Instance.DestoryLevel();
+		PanelManager.Instance.Open<RoomListPanel>();
 
+		NetManager.Send(msg);
+	}
+	public void OnReadyClick()
+	{
+		//设置玩家已经准备的状态显示
+		GameObject text = playerReadyTexts[GameManager.Instance.ctrllerId].gameObject;
+		text.SetActive(!text.activeSelf);
+		//发送准备消息
+		MsgIsReady msg = new MsgIsReady();
+		msg.isReady = text.activeSelf;
+		NetManager.Send(msg);
+	}
 	//收到开战返回
 	public void OnMsgStartBattle(MsgBase msgBase)
 	{
-		MsgLeaveRoom msg = (MsgLeaveRoom)msgBase;
+		MsgStartBattle msg = (MsgStartBattle)msgBase;
 		//开战
 		if (msg.result == 0)
 		{
 			//等待战斗推送的协议
+			Close();
+		}
+		else if (msg.result == 2)
+		{
+			PanelManager.Instance.Open<TipPanel>("开战失败！所有人都要准备！");
 		}
 		//开战失败
 		else

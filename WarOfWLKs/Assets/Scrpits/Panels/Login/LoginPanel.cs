@@ -102,6 +102,8 @@ public class LoginPanel : BasePanel
 	//当按下登陆按钮
 	public void OnLoginClick()
 	{
+
+		
 		//用户名密码为空
 		if (idInput.text == "" || pwInput.text == "")
 		{
