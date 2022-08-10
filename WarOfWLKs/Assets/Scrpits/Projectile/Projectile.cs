@@ -6,7 +6,8 @@ public class Projectile : MonoBehaviour
 
 	private SkillBase m_skill;
 
-	private GameObject parent;
+	//发出技能的父亲
+	public GameObject parent;
 
 	private Vector3 m_targetPos;
 
@@ -32,14 +33,14 @@ public class Projectile : MonoBehaviour
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <param name="parent">子弹的父节点</param>
+	/// <param name="parent">发出子弹的人</param>
 	/// <param name="moveDir">子弹移动的方向</param>
 	/// <param name="targetPos">子弹移动到的位置</param>
 	/// <param name="castDistance">技能施法距离</param>
 	/// <param name="projSpeed">技能（子弹）移动速度</param>
 	public void InitPorjectile(GameObject parent, Vector2 moveDir, Vector2 targetPos, float castDistance, float projSpeed, SkillBase skill)
 	{
-		//记录父亲（可能需要计分功能）
+		//记录发射的角色，回收需要
 		this.parent = parent;
 
 		//设置初始位置
@@ -100,25 +101,35 @@ public class Projectile : MonoBehaviour
 			//m_animator.SetBool("Move", false);
 		}
 	}
+	/// <summary>
+	/// CtrlActor发出的技能子弹处理
+	/// </summary>
+	/// <param name="collision"></param>
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (collision.gameObject == this.parent.gameObject) return;
 
-		if (collision.tag != "Player2") return;
+		//之有当前子弹是当前客户端的控制角色发出的时候才会发送消息
+		if (parent != GameManager.Instance.PlayerSelf) return;
+		//如果碰到的角色是父亲，不处理
+		if (collision.gameObject == this.parent.gameObject) return;
+		//如果碰到的对象不是同步玩家，不处理
+		if (collision.tag != "SyncActor") return;
 
 		if (collision.gameObject.GetComponent<Actor>().camp == parent.gameObject.GetComponent<Actor>().camp) return;
 
+
+		
 		//Debug.Log(collision);
 		//被击中的角色
 		Actor hitActor = collision.gameObject.GetComponent<Actor>();
 		hitActor.HandleDamage(m_skill.Damage, m_skill);
-		hitActor.KnockBack(this.gameObject.transform.position,m_skill);
+		hitActor.KnockBack(this.gameObject.transform.position, m_skill);
 		//参与射击的角色
 		Actor actor = parent.GetComponent<Actor>();
+
+
 		SendMsgHit(actor, hitActor);
-		this.gameObject.SetActive(false);
-
-
+		GameManager.Instance.Pool.ReleaseObject(this.gameObject);
 	}
 	private void SendMsgHit(Actor actor, Actor hitActor)
 	{
@@ -126,15 +137,18 @@ public class Projectile : MonoBehaviour
 		{
 			return;
 		}
-		//不是自己发的击中
+		//不是自己发的子弹击中自己
 		if (actor.id != GameManager.Instance.ctrllerId)
 		{
 			return;
 		}
 		//发消息
 		MsgHit msg = new MsgHit();
+
 		msg.targetId = hitActor.id;
 		msg.id = actor.id;
+		msg.skillId = m_skill.Id;
+		msg.damage = m_skill.Damage;
 		//msg.damage = 
 		msg.x = transform.position.x;
 		msg.y = transform.position.y;

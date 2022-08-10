@@ -34,7 +34,7 @@ MonoBehaviour:
   - id: 10
     value: Back
   - id: 11
-    value: Your mother died
+    value: "<color=orange>throw apples\uFF01</color>\nthrow your apple out"
   - id: 12
     value: Language
   - id: 13
@@ -51,3 +51,9 @@ MonoBehaviour:
     value: Tip
   - id: 19
     value: OK
+  - id: 20
+    value: username or password is incorrect
+  - id: 21
+    value: '<color=yellow>Shout</color>
+
+      You screamed and scared people away'

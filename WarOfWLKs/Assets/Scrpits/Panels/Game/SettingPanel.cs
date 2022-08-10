@@ -13,7 +13,7 @@ public class SettingPanel : BasePanel
 
 	private Dropdown languageDropdown;
 
-	private Button backBtn;
+	//private Button backBtn;
 
 	//初始化
 	public override void OnInit()
@@ -29,7 +29,7 @@ public class SettingPanel : BasePanel
 		musicSlider = skin.transform.Find("MusicSlider").GetComponent<Slider>();
 		sfxSlider = skin.transform.Find("SFXSlider").GetComponent<Slider>();
 		languageDropdown = skin.transform.Find("LanguageDropdown").GetComponent<Dropdown>();
-		backBtn = skin.transform.Find("BackBtn").GetComponent<Button>();
+		//backBtn = skin.transform.Find("BackBtn").GetComponent<Button>();
 		
 		//初始化语言值
 		languageDropdown.value = GameManager.curLanguage;
@@ -38,7 +38,7 @@ public class SettingPanel : BasePanel
 		closeBtn.onClick.AddListener(OnCloseBtnClick);
 		SoundManager.Instance.AddSliderLisener(musicSlider, sfxSlider);
 		languageDropdown.onValueChanged.AddListener(OnChangeLanguage);
-		backBtn.onClick.AddListener(OnBackBtnClick);
+		//backBtn.onClick.AddListener(OnBackBtnClick);
 	}
 
 	public void OnBackBtnClick()
@@ -48,7 +48,7 @@ public class SettingPanel : BasePanel
 	}
 	public void OnCloseBtnClick()
 	{
-		if (GameManager.Instance.IsPlaying)
+		if (BattleManager.hasCreateLevel)
 		{
 			PanelManager.Instance.Open<GamingPanel>();
 		}

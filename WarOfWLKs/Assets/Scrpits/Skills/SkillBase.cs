@@ -7,42 +7,46 @@ using UnityEngine;
 public class SkillBase
 {
     //发射技能的角色
-    Actor m_player;
+    private Actor m_castPlayer;
 
+    //技能发射子弹名（可能不存在）
     private string m_projName;
-
+    //技能名
     private string m_skillName;
+
+    //翻译文本所在Excel文件的行号
+    public int translationNum;
 
     private float m_projSpeed;
 
     private bool b_isCoolDown = false;
 
-    private float m_coolDown;
+    private float m_coolDownTime;
 
     //图标位置
-    protected string m_iconPath;
-
+    public string iconPath;
 
     [SerializeField]
     private int m_damage;
 
-    private KeyCode m_keyCode;
+    //技能快捷键
+    private KeyCode keyCode;
 
     //技能ID
-    protected int m_skillID;
+    public int Id;
 
     //技能作用范围
-    private float castDistance;
+    private float skillRange;
 
-    protected float m_cdDuration = 0;
+    public float cdDuration = 0;
 
     private float knockBackDistance;
 
     public bool IsCoolDown { get => b_isCoolDown; set => b_isCoolDown = value; }
-    public float CastDistance { get => castDistance; set => castDistance = value; }
-    public float CoolDown { get => m_coolDown; set => m_coolDown = value; }
+    public float SkillRange { get => skillRange; set => skillRange = value; }
+    public float CoolDownTime { get => m_coolDownTime; set => m_coolDownTime = value; }
     public float ProjSpeed { get => m_projSpeed; set => m_projSpeed = value; }
-    public KeyCode KeyCode { get => m_keyCode; set => m_keyCode = value; }
+    public KeyCode KeyCode { get => keyCode; set => keyCode = value; }
     public string SkillName { get => m_skillName; set => m_skillName = value; }
     public string ProjName { get => m_projName; set => m_projName = value; }
     public int Damage { get => m_damage; set => m_damage = value; }
@@ -64,11 +68,11 @@ public class SkillBase
 	{
         if (IsCoolDown)
         {
-            m_cdDuration += Time.deltaTime;
+            cdDuration += Time.deltaTime;
             //Debug.Log(m_cdDuration);
-            if (m_cdDuration >= CoolDown)
+            if (cdDuration >= CoolDownTime)
             {
-                m_cdDuration = 0;
+                cdDuration = 0;
                 IsCoolDown = false;
             }
         }

@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+public enum SKILL
+{
+	APPLE = 1, SHOUT = 2
+}
 
 public class Actor : MonoBehaviour
 {
@@ -20,8 +24,14 @@ public class Actor : MonoBehaviour
 	[SerializeField]
 	public Stat m_health;
 
+	//技能列表，一般只有4个技能，可加
+	private List<SkillBase> m_skills = new List<SkillBase>();
+
+	public List<SkillBase> Skills { get => m_skills; set => m_skills = value; }
+
+
 	//已经准备好使用的技能
-	protected SkillBase m_readySkill;
+	private SkillBase readySkill;
 
 	//动画
 	protected Animator ani;
@@ -36,23 +46,27 @@ public class Actor : MonoBehaviour
 	//当前移动的方向
 	protected Vector2 m_direct;
 
-	//角色准备放技能
-	protected bool b_isPrepareCast = false;
-
-	protected bool b_isClickButtom = false;
-
+	//角色正在被击退
 	protected bool b_isKnocked = false;
 
-
-	public bool IsActive { get; set; }
 	public float MaxSpeed { get; set; }
+	public SkillBase ReadySkill { get => readySkill; set => readySkill = value; }
 
-	public virtual void Init(GameObject actorObj)
+	public virtual void Awake()
+	{
+		//在awake把所有绑定的代码绑定好，以免奇怪的事情发生
+		ani = this.gameObject.GetComponent<Animator>();
+
+		//游戏开始时绑定技能给Actor
+		Skills.Add(new AppleSkill());
+		Skills.Add(new ShoutSkill());
+	}
+
+	public virtual void Init(GameObject actorObj, Vector2 vec)
 	{
 		skin = actorObj;
-		ani = GetComponent<Animator>();
-		ani.SetBool("Move", false);
-		m_readySkill = new FireSkill();
+
+		//ReadySkill = new AppleSkill();
 	}
 
 	/// <summary>
@@ -118,12 +132,22 @@ public class Actor : MonoBehaviour
 	// Start is called before the first frame update
 	protected virtual void Start()
 	{
-		ani = this.gameObject.GetComponent<Animator>();
 
-		//游戏开始时绑定技能给Actor
-		Skills.Add(new FireSkill());
 
 		m_health.Bar.Reset();
+
+		//游戏开始时设置动画
+		ani.SetBool("Move", false);
+
+		//设置名字
+		if (this.camp == 1)
+		{
+			this.m_health.NameTxt.text = "<color=red>" + this.id + "</color>";
+		}
+		else
+		{
+			this.m_health.NameTxt.text = "<color=blue>" + this.id + "</color>";
+		}
 
 		MaxSpeed = m_actorSpeed;
 	}
@@ -137,25 +161,20 @@ public class Actor : MonoBehaviour
 
 		SkillsUpdate();
 
-		m_health.Initialize();
+		//m_health.Initialize();
 		//测试生命条的代码
 		//m_health.CurrentVal -= 0.1f;
 		//HandleDamage(20f, m_readySkill);
 	}
 
-	//技能列表，一般只有4个技能，可加
-	private List<SkillBase> m_skills = new List<SkillBase>();
 
-	public List<SkillBase> Skills { get => m_skills; set => m_skills = value; }
-
-	public bool IsOnButtom { get => b_isClickButtom; set => b_isClickButtom = value; }
 
 	/// <summary>
 	/// 处理角色的释放技能CD、等信息
 	/// </summary>
 	private void SkillsUpdate()
 	{
-		foreach (SkillBase skill in Skills)
+		foreach (AppleSkill skill in Skills)
 		{
 			skill.Update();
 		}
@@ -230,29 +249,31 @@ public class Actor : MonoBehaviour
 		//需要这一句，其他代码位置不存在速度修改，会导致bug
 		m_actorSpeed = MaxSpeed;
 
-		//让这个对象进入 isn't active 不活跃状态
-		IsActive = false;
-
 		//释放对象以后再放入对象池
 		GameManager.Instance.Pool.ReleaseObject(gameObject);
 
 	}
 	/// <summary>
-	/// 释放技能
+	/// 释放Apple技能
 	/// </summary>
 	/// <param name="skillPos">//暂时不需要使用技能要到达的位置</param>
-	public virtual Vector2 CastSkill(Vector2 skillPos)
+	public virtual void CastAppleSkill(Vector2 skillPos, SkillBase skillBase, GameObject parent)
 	{
 		//Debug.Log(skillPos);
-		Projectile projectile = GameManager.Instance.Pool.GetObject(m_readySkill.ProjName).GetComponent<Projectile>();
+		//激活子弹对象实例，并且获得其代码
+		Projectile projectile = GameManager.Instance.Pool.GetObject(ReadySkill.ProjName).GetComponent<Projectile>();
 
 		Vector2 skillMoveVec = new Vector2(skillPos.x - this.transform.position.x, skillPos.y - this.transform.position.y);
 
-		projectile.InitPorjectile(this.gameObject, skillMoveVec.normalized, skillPos, m_readySkill.CastDistance, m_readySkill.ProjSpeed, m_readySkill);
+		//初始化技能投射
+		projectile.InitPorjectile(parent, skillMoveVec.normalized, skillPos, ReadySkill.SkillRange, ReadySkill.ProjSpeed, ReadySkill);
 
-		return skillMoveVec;
+		return;
 	}
 
+	/// <summary>
+	/// 已经弃用
+	/// </summary>
 	public void Rebirth()
 	{
 		//当我们需要重新启用当前资源时，将这个资源的初始位置设置到GridPosition
@@ -263,6 +284,10 @@ public class Actor : MonoBehaviour
 		GameManager.Instance.ShowDiePanel(false);
 	}
 
+	/// <summary>
+	/// 已经弃用
+	/// </summary>
+	/// <param name="maxHealth"></param>
 	public void Reset(float maxHealth)
 	{
 		transform.position = LevelManager.Instance.Tiles[LevelManager.Instance.BirthPoint[1]].transform.position;
@@ -273,13 +298,93 @@ public class Actor : MonoBehaviour
 
 		this.m_health.CurrentVal = this.m_health.MaxVal;
 
+
 		this.m_destination = transform.position;
 	}
 	public void SyncHit(MsgHit msg)
 	{
-		HandleDamage(msg.damage, new FireSkill());
-		Vector3 vector3 = new Vector3(msg.x, msg.y, 0);
-		KnockBack(vector3, new FireSkill());
+		//写死，之后需要修改
+		int skillId = msg.skillId;
+		switch (skillId)
+		{
+			case (int)SKILL.APPLE:
+				{
+					SyncAppleHit(msg);
+					break;
+				}
+			case 2:
+				{
+					SyncShoutHit(msg);
+					break;
+				}
+		}
 	}
+	public void SyncShoutHit(MsgHit msg)
+	{
 
+	}
+	public void SyncAppleHit(MsgHit msg)
+	{
+		//回收子弹
+		RecycleProjectile(msg.id);
+		//处理伤害效果
+		HandleDamage(msg.damage, new AppleSkill());
+		Vector3 vector3 = new Vector3(msg.x, msg.y, 0);
+		KnockBack(vector3, new AppleSkill());
+	}
+	/// <summary>
+	/// 回收子弹
+	/// </summary>
+	/// <param name="id"></param>
+	public void RecycleProjectile(string id)
+	{
+		//及时回收子弹
+		GameObject projectliesFather = GameObject.Find("Projectiles");
+
+		Projectile projectile = null;
+		//在Projectiles下寻找子弹
+		int count = projectliesFather.transform.childCount;
+		for (int i = 0; i < count; i++)
+		{
+			//当前对象是否是 Apple 子弹
+			GameObject gameObject = projectliesFather.transform.GetChild(i).gameObject;
+			if (gameObject.tag != "Apple") continue;
+			//当前对象是 Apple 子弹
+			//找到发射子弹的父亲的id
+			string fatherId = gameObject.transform.GetComponent<Projectile>().parent.GetComponent<Actor>().id;
+			if (fatherId == id)
+			{
+				projectile = projectliesFather.transform.GetChild(i).GetComponent<Projectile>();
+				break;
+			}
+
+		}
+		if (projectile == null)
+		{
+			Debug.Log("Projectile's father is null !");
+			return;
+		}
+		GameManager.Instance.Pool.ReleaseObject(projectile.gameObject);
+	}
+	public SyncActor GetSyncActor(string id)
+	{
+		GameObject ActorsFather = GameObject.Find("Actors");
+		SyncActor syncActor = null;
+		foreach (string actor in BattleManager.actors.Keys)
+		{
+			string syncActorId = actor;
+			if (syncActorId == id)
+			{
+				syncActor =(SyncActor) BattleManager.Instance.GetActor(syncActorId);
+				break;
+			}
+		}
+
+		if (syncActor == null)
+		{
+			Debug.Log("syncActor is null!");
+			return null;
+		}
+		return syncActor;
+	}
 }

@@ -45,19 +45,13 @@ public class GameManager : Singleton<GameManager>
 		//打开登陆面板
 		PanelManager.Instance.Open<LoginPanel>();
 	}
+	/// <summary>
+	/// 已经弃用
+	/// </summary>
 	public void RebirthClick()
 	{
 
 		PlayerSelf.GetComponent<CtrlActor>().Rebirth();
-	}
-	public void OnClickQ()
-	{
-		CtrlActor actor = PlayerSelf.GetComponent<CtrlActor>();
-		if (actor.Skills[0].IsCoolDown)
-		{
-			actor.CastReady(actor.Skills[0]);
-		}
-
 	}
 
 	/// <summary>
@@ -85,20 +79,10 @@ public class GameManager : Singleton<GameManager>
 
 		CameraMovement.Instance.Init();
 
-		PlayerSelf = GameObject.FindGameObjectWithTag("Player1");
+		PlayerSelf = GameObject.FindGameObjectWithTag("CtrlActor");
 
 		//m_startMenu.SetActive(false);
 	}
-
-	/*	public void QuitGame()
-		{
-			Application.Quit();
-		}
-
-		public void JoinRoom()
-		{
-
-		}*/
 	void Update()
 	{
 		NetManager.Update();
@@ -106,6 +90,7 @@ public class GameManager : Singleton<GameManager>
 	void OnMsgKick(MsgBase msgBase)
 	{
 		PanelManager.Instance.Open<TipPanel>("被踢下线");
+		PanelManager.Instance.Open<LoginPanel>();
 	}
 	//关闭连接
 	void OnConnectClose(string err)

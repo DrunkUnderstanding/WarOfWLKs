@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 3436848057052082822}
   m_Layer: 0
   m_Name: SyncMaskAborigine
-  m_TagString: Player2
+  m_TagString: SyncActor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -285,12 +285,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1110cdfd4b833346a0e1298e6fdbf84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  id: 
+  camp: 0
   m_actorSpeed: 1
-  m_skillRange: {fileID: 1429380331802908044}
   m_health:
+    actor: {fileID: 0}
     bar: {fileID: 1813078757622484964}
     maxVal: 100
     m_healthTxt: {fileID: 1031089290200331022}
+    m_nameTxt: {fileID: 1099750694072895132}
     currentVal: 100
   m_destination: {x: 0, y: 0}
 --- !u!1001 &1335467530064987258
@@ -423,6 +426,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1335467530064987258}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1099750694072895132 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2146969941711241958, guid: aa921b2347991364bb721aa47f65ff14,
+    type: 3}
+  m_PrefabInstance: {fileID: 1335467530064987258}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1031089290200331022 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2073804942187837300, guid: aa921b2347991364bb721aa47f65ff14,

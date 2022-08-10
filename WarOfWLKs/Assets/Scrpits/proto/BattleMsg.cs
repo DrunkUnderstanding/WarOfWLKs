@@ -40,13 +40,27 @@ public class MsgEnterBattle : MsgBase
 	public int mapId = 1;
 }
 
+[System.Serializable]
+public class ResultInfo
+{
+	public string id = "xqy";   //账号
+	public int camp = 0;        //阵营
+
+	public int score = 0;
+	public int addScore = 0;    //增加的分数
+}
 //战斗结果（服务器）
 public class MsgBattleResult : MsgBase
 {
 	public MsgBattleResult() { protoName = "MsgBattleResult"; }
 
+	//结算界面玩家信息
+	public ResultInfo[] resultInfos;
+
 	//获胜的阵营
 	public int winCamp = 0;
+
+
 }
 
 //退出战斗（一般为意外）

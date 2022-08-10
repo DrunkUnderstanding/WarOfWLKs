@@ -343,6 +343,7 @@ public static class NetManager
 		try
 		{
 			Socket socket = (Socket)ar.AsyncState;
+			//if (socket == null) return;
 			//获取接收数据长度
 			int count = socket.EndReceive(ar);
 			readBuff.writeIdx += count;

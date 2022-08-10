@@ -931,6 +931,7 @@ GameObject:
   - component: {fileID: 360195193881845402}
   - component: {fileID: 360195193881845400}
   - component: {fileID: 360195193881845403}
+  - component: {fileID: 6832553808504192884}
   m_Layer: 5
   m_Name: BgImage
   m_TagString: Untagged
@@ -977,7 +978,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2100000, guid: 09b46f5c2b5d4ec4ab96ec92c068ede6, type: 2}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
@@ -994,6 +995,19 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6832553808504192884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 360195193881845413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3961213e041be64d879a0b6c6ed6fd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ScorllSpeed: {x: 0.1, y: 0}
 --- !u!1 &360195193942679951
 GameObject:
   m_ObjectHideFlags: 0

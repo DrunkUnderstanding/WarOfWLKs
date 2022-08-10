@@ -16,6 +16,10 @@ public class LoginPanel : BasePanel
 	//语言选项
 	private Dropdown languageDropdown;
 
+	private PlayerPrefs idPrefs;
+
+	private PlayerPrefs pwPrefs;
+
 	//初始化
 	public override void OnInit()
 	{
@@ -35,6 +39,9 @@ public class LoginPanel : BasePanel
 		languageDropdown = skin.transform.Find("LanguageDropdown").GetComponent<Dropdown>();
 		//初始化LanguageDropdown的值
 		languageDropdown.value = GameManager.curLanguage;
+		//初始化
+		idInput.text = PlayerPrefs.GetString("idInput", "Enter your ID");
+		pwInput.text = PlayerPrefs.GetString("pwInput", "Enter your PassWord");
 		//监听
 		loginBtn.onClick.AddListener(OnLoginClick);
 		regBtn.onClick.AddListener(OnRegClick);
@@ -103,7 +110,7 @@ public class LoginPanel : BasePanel
 	public void OnLoginClick()
 	{
 
-		
+
 		//用户名密码为空
 		if (idInput.text == "" || pwInput.text == "")
 		{
@@ -114,6 +121,9 @@ public class LoginPanel : BasePanel
 		MsgLogin msgLogin = new MsgLogin();
 		msgLogin.id = idInput.text;
 		msgLogin.pw = pwInput.text;
+
+		PlayerPrefs.SetString("idInput", idInput.text);
+		PlayerPrefs.SetString("pwInput", pwInput.text);
 		NetManager.Send(msgLogin);
 	}
 

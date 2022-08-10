@@ -58,7 +58,7 @@ public class BarScript : MonoBehaviour
     }
 
     /// <summary>
-    /// 设置怪物的血条显示
+    /// 设置人物的血条显示
     /// </summary>
     private void HandleBarUpdate()
     {

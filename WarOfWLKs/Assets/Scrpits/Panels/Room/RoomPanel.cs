@@ -152,9 +152,11 @@ public class RoomPanel : BasePanel
 	public void OnCloseClick()
 	{
 		MsgLeaveRoom msg = new MsgLeaveRoom();
+
 		LevelManager.Instance.DestoryLevel();
 		PanelManager.Instance.Open<RoomListPanel>();
 
+		Camera.main.transform.position = new Vector3(0, 0, -10);
 		NetManager.Send(msg);
 	}
 	public void OnReadyClick()

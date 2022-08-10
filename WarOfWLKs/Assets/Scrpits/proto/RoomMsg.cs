@@ -51,6 +51,7 @@ public class PlayerInfo
 
 	public int score = 0;
 	public int isOwner = 0;     //是否是房主
+	public int addScore = 0;	//增加的分数
 }
 
 //获取房间信息
@@ -85,4 +86,11 @@ public class MsgIsReady : MsgBase
 	//服务端补充
 	public string id = "";
 }
+//获取排行榜信息
+public class MsgGetRank : MsgBase
+{
+	public MsgGetRank() { protoName = "MsgGetRank"; }
 
+	//所有玩家的信息，服务端补充
+	public PlayerInfo[] playerInfos;
+}

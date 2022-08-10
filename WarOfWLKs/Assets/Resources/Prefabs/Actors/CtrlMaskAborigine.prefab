@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 1615517294339012916}
   m_Layer: 0
   m_Name: CtrlMaskAborigine
-  m_TagString: Player1
+  m_TagString: CtrlActor
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -169,12 +169,15 @@ MonoBehaviour:
   camp: 0
   m_actorSpeed: 1
   m_health:
+    actor: {fileID: 0}
     bar: {fileID: 1664413688443583428}
     maxVal: 100
     m_healthTxt: {fileID: 35849402023577390}
+    m_nameTxt: {fileID: 104549836445676220}
     currentVal: 100
   m_destination: {x: 0, y: 0}
-  m_skillRange: {fileID: 2154509797567095212}
+  skillRangeGo: {fileID: 0}
+  skillRange: {fileID: 0}
 --- !u!1 &2154509797567095212
 GameObject:
   m_ObjectHideFlags: 0
@@ -187,13 +190,14 @@ GameObject:
   - component: {fileID: 7676514067519750797}
   - component: {fileID: 5198466829263138573}
   - component: {fileID: 1371782295291146158}
+  - component: {fileID: 958934769311193503}
   m_Layer: 0
   m_Name: SkillRange
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &340287519477865804
 Transform:
   m_ObjectHideFlags: 0
@@ -295,6 +299,19 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &958934769311193503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2154509797567095212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a89b7bc14fc00204490359de95a80762, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skillRange: 0.02
 --- !u!1001 &2069683634797326426
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -430,6 +447,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 2069683634797326426}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &104549836445676220 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2146969941711241958, guid: aa921b2347991364bb721aa47f65ff14,
+    type: 3}
+  m_PrefabInstance: {fileID: 2069683634797326426}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &35849402023577390 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2073804942187837300, guid: aa921b2347991364bb721aa47f65ff14,

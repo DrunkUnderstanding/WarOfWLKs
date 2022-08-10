@@ -7,18 +7,16 @@ public class SyncActor : Actor
 	//预测信息，哪个时间到哪个位置
 	private Vector2 lastPos;
 
-	private Vector2 forcastPos;
-
-	private float forecastTime;
-
-	public override void Init(GameObject actorObj)
+	public override void Awake()
 	{
-		base.Init(actorObj);
-		lastPos = new Vector2(transform.position.x, transform.position.y);
-		/*		//设置物理运动影响
-				Rigidbody2D rigidbody = GetComponent<Rigidbody2D>();
-				rigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
-				rigidbody.simulated = false;*/
+		base.Awake();
+	}
+	public override void Init(GameObject actorObj, Vector2 vec)
+	{
+		base.Init(actorObj, vec);
+
+		lastPos = new Vector2(vec.x, vec.y);
+
 	}
 
 	public void SyncPos(MsgSyncActor msg)
@@ -42,12 +40,34 @@ public class SyncActor : Actor
 
 	public void SyncSkill(MsgSkill msg)
 	{
-		FireSkill fireSkill = new FireSkill();
+		//写死，之后需要修改
+		int skillId = msg.skillId;
+		switch (skillId)
+		{
+			//扔苹果技能
+			case (int)SKILL.APPLE:
+				{
+					SyncAppleSkill(msg);
+					break;
+				}
+			case (int)SKILL.SHOUT:
+				{
+					SyncShoutSkill(msg);
+					break;
+				}
+		}
+	}
 
-		Vector2 skillPos = new Vector2(msg.VecX, msg.VecY);
+	public void SyncShoutSkill(MsgSkill msg)
+	{
 
-		CastSkill(skillPos);
-
+	}
+	public void SyncAppleSkill(MsgSkill msg)
+	{
+		Vector2 skillPos = new Vector2(msg.x, msg.y);
+		AppleSkill appleSkill = new AppleSkill();
+		
+		CastAppleSkill(skillPos, appleSkill, GetSyncActor(msg.id).gameObject);
 	}
 	public void StartAni()
 	{
@@ -61,13 +81,13 @@ public class SyncActor : Actor
 		//设置方向
 		m_moveVec = m_destination - (Vector2)transform.position;
 
-
-
 	}
 	// Start is called before the first frame update
 	protected override void Start()
 	{
 		base.Start();
+
+
 	}
 
 	// Update is called once per frame

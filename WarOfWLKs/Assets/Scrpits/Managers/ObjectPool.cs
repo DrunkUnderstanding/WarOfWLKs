@@ -49,7 +49,7 @@ public class ObjectPool : MonoBehaviour
     /// <param name="gameObject"></param>
     public void ReleaseObject(GameObject gameObject)
     {
+        pooledObjects.Add(gameObject);
         gameObject.SetActive(false);
-
     }
 }

@@ -10,6 +10,10 @@ using UnityEngine.UI;
 [Serializable]
 public class Stat
 {
+
+    [SerializeField]
+    private Actor actor;
+
     [SerializeField]
     private BarScript bar;
 
@@ -18,6 +22,9 @@ public class Stat
 
     [SerializeField]
     private Text m_healthTxt;
+
+    [SerializeField]
+    private Text m_nameTxt;
 
     [SerializeField]
     private float currentVal;
@@ -46,8 +53,9 @@ public class Stat
     }
     //角色的生命条控制脚本
     public BarScript Bar { get => bar; }
+	public Text NameTxt { get => m_nameTxt; set => m_nameTxt = value; }
 
-    public void Initialize()
+	public void Initialize()
     {
         this.MaxVal = maxVal;
         this.CurrentVal = currentVal;

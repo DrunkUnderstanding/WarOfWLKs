@@ -7,7 +7,7 @@ public class DamageTile : TileScript
 	private float damage = 2f;
 	private void OnTriggerStay2D(Collider2D collision)
 	{
-		if (collision.tag == "Player1" || collision.tag == "Player2")
+		if (collision.tag == "CtrlActor" || collision.tag == "SyncActor")
 			collision.GetComponent<Actor>().HandleBurned(damage);
 	}
 	private void OnCollisionStay2D(Collision2D collision)

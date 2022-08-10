@@ -52,7 +52,7 @@ public class PanelManager : Singleton<PanelManager>
 		//列表
 		panels.Add(name, panel);
 		//OnShow
-		panel.OnShow(para);
+		panel.OnShow(para); 
 		return panel;
 	}
 

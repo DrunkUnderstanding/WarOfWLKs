@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class BattleManager : Singleton<BattleManager>
@@ -29,7 +28,7 @@ public class BattleManager : Singleton<BattleManager>
 		if (actor == null) return;
 		if (actor.IsDie()) return;
 		actor.m_health.CurrentVal = 0;
-		if (this.tag == "Player1")
+		if (this.tag == "CtrlActor")
 		{
 			GameManager.Instance.ShowDiePanel(true);
 		}
@@ -38,9 +37,16 @@ public class BattleManager : Singleton<BattleManager>
 
 	public void DestoryActors()
 	{
-		for (int i = 0; i < actortsFather.childCount; i++)
+		List<Actor> destroyList = new List<Actor>();
+		foreach (string actor in actors.Keys)
 		{
-			Destroy(actortsFather.GetChild(i).gameObject);
+			//Destroy(actors[actor].gameObject);
+			destroyList.Add(actors[actor]);
+		}
+		actors.Clear();
+		for (int i = 0; i < destroyList.Count; i++)
+		{
+			Destroy(destroyList[i].gameObject);
 		}
 	}
 	public void AddActor(string id, Actor actor)
@@ -84,14 +90,12 @@ public class BattleManager : Singleton<BattleManager>
 	public void EnterBattle(MsgEnterBattle msg)
 	{
 		//重置
-		BattleManager.Instance.Reset();
+		//BattleManager.Instance.Reset();
 		//关闭界面
 		PanelManager.Instance.Close("RoomPanel");
 		PanelManager.Instance.Close("ResultPanel");
 
-		//打开游玩过程中的界面
-		PanelManager.Instance.Open<GamingPanel>();
-		hasFinished = false;
+
 		//产生角色
 		for (int i = 0; i < msg.actors.Length; i++)
 		{
@@ -107,7 +111,9 @@ public class BattleManager : Singleton<BattleManager>
 			LevelManager.Instance.CreateLevel();
 			hasCreateLevel = true;
 		}
-
+		//打开游玩过程中的界面
+		PanelManager.Instance.Open<GamingPanel>();
+		hasFinished = false;
 	}
 	//生成角色
 	public void GenerateActor(ActorInfo actorInfo)
@@ -117,12 +123,14 @@ public class BattleManager : Singleton<BattleManager>
 		GameObject actorObj;
 		if (actorInfo.id == GameManager.Instance.ctrllerId)
 		{
+			//actorObj = GameManager.Instance.Pool.GetObject("CtrlMaskAborigine");
 			actorObj = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/CtrlMaskAborigine");
 			actorObj = Instantiate(actorObj);
 			GameManager.Instance.PlayerSelf = actorObj;
 		}
 		else
 		{
+			//actorObj=GameManager.Instance.Pool.GetObject("SyncMaskAborigine");
 			actorObj = ResourceManager.Instance.LoadRes<GameObject>("Prefabs/Actors/SyncMaskAborigine");
 			actorObj = Instantiate(actorObj);
 		}
@@ -132,23 +140,25 @@ public class BattleManager : Singleton<BattleManager>
 		//获取代码组件
 		Actor actor = actorObj.GetComponent<Actor>();
 
-		actor.Init(actorObj);
 
 		//属性设置
 		actor.camp = actorInfo.camp;
 		actor.id = actorInfo.id;
 		actor.m_health.CurrentVal = actorInfo.hp;
 		actor.m_health.MaxVal = actorInfo.hp;
-
+		actor.m_health.Initialize();
 
 		//修改在管理器内的显示
 		actorObj.name = objName;
 		Transform father = GameObject.Find("Actors").transform;
 		actorObj.transform.SetParent(father);
 
-		//pos、transform设置
+		//pos设置
 		Vector2 pos = new Vector2(actorInfo.x, actorInfo.y);
+
 		actorObj.transform.position = pos;
+
+		actor.Init(actorObj, pos);
 		//actorObj.transform.SetParent(actorNameObj.transform);
 
 		//加入列表
@@ -169,8 +179,9 @@ public class BattleManager : Singleton<BattleManager>
 		hasFinished = true;
 		//关闭死亡界面
 		PanelManager.Instance.Close("DiedPanel");
-		//显示胜利
-		PanelManager.Instance.Open<ResultPanel>(isWin);
+		//显示胜利,结算
+		ResultInfo[] resultInfos = msg.resultInfos;
+		PanelManager.Instance.Open<ResultPanel>(isWin, resultInfos);
 	}
 
 	public void OnMsgLeaveBattle(MsgBase msgBase)
@@ -215,9 +226,9 @@ public class BattleManager : Singleton<BattleManager>
 	{
 		MsgHit msg = (MsgHit)msgBase;
 
-		Actor actor = (Actor)GetActor(msg.targetId);
-		if (actor == null) return;
-		actor.SyncHit(msg);
+		Actor targetActor = GetActor(msg.targetId);
+		if (targetActor == null) return;
+		targetActor.SyncHit(msg);
 
 	}
 	// Start is called before the first frame update

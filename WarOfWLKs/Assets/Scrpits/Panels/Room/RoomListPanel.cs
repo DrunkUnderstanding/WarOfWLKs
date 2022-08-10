@@ -14,6 +14,9 @@ public class RoomListPanel : BasePanel
 	private Button createButton;
 	//刷新列表按钮
 	private Button reflashButton;
+	//排行列表按钮
+	private Button rankButton;
+
 	//列表容器
 	private Transform content;
 	//房间物体
@@ -36,6 +39,7 @@ public class RoomListPanel : BasePanel
 		scoreText = skin.transform.Find("BgImage/InfoPanel/ScoreBg/ScoreText").GetComponent<Text>();
 		createButton = skin.transform.Find("BgImage/CtrlPanel/CreateButton").GetComponent<Button>();
 		reflashButton = skin.transform.Find("BgImage/CtrlPanel/ReflashButton").GetComponent<Button>();
+		rankButton = skin.transform.Find("BgImage/CtrlPanel/RankButton").GetComponent<Button>();
 		content = skin.transform.Find("BgImage/ListPanel/Scroll View/Viewport/Content");
 		roomObj = skin.transform.Find("Room").gameObject;
 		closeBtn = skin.transform.Find("CloseBtn").GetComponent<Button>();
@@ -47,11 +51,14 @@ public class RoomListPanel : BasePanel
 		closeBtn.onClick.AddListener(OnCloseClick);
 		createButton.onClick.AddListener(OnCreateClick);
 		reflashButton.onClick.AddListener(OnReflashClick);
+		rankButton.onClick.AddListener(OnRankClick);
 		//协议监听
 		NetManager.AddMsgListener("MsgGetAchieve", OnMsgGetAchieve);
 		NetManager.AddMsgListener("MsgGetRoomList", OnMsgGetRoomList);
 		NetManager.AddMsgListener("MsgCreateRoom", OnMsgCreateRoom);
 		NetManager.AddMsgListener("MsgEnterRoom", OnMsgEnterRoom);
+		NetManager.AddMsgListener("MsgGetRank", OnMsgGetRank);
+
 		//发送查询
 		MsgGetAchieve msgGetAchieve = new MsgGetAchieve();
 		NetManager.Send(msgGetAchieve);
@@ -68,35 +75,10 @@ public class RoomListPanel : BasePanel
 		NetManager.RemoveMsgListener("MsgGetRoomList", OnMsgGetRoomList);
 		NetManager.RemoveMsgListener("MsgCreateRoom", OnMsgCreateRoom);
 		NetManager.RemoveMsgListener("MsgEnterRoom", OnMsgEnterRoom);
+		NetManager.RemoveMsgListener("MsgGetRank", OnMsgGetRank);
 	}
 
-	//收到成绩查询协议
-	public void OnMsgGetAchieve(MsgBase msgBase)
-	{
-		MsgGetAchieve msg = (MsgGetAchieve)msgBase;
-		scoreText.text = msg.score.ToString();
-	}
 
-	//收到房间列表协议
-	public void OnMsgGetRoomList(MsgBase msgBase)
-	{
-		MsgGetRoomList msg = (MsgGetRoomList)msgBase;
-		//清除房间列表
-		for (int i = content.childCount - 1; i >= 0; i--)
-		{
-			GameObject o = content.GetChild(i).gameObject;
-			Destroy(o);
-		}
-		//重新生成列表
-		if (msg.rooms == null)
-		{
-   			return;
-		}
-		for (int i = 0; i < msg.rooms.Length; i++)
-		{
-			GenerateRoom(msg.rooms[i]);
-		}
-	}
 
 	//创建一个房间单元
 	public void GenerateRoom(RoomInfo roomInfo)
@@ -140,7 +122,17 @@ public class RoomListPanel : BasePanel
 		MsgGetRoomList msg = new MsgGetRoomList();
 		NetManager.Send(msg);
 	}
-
+	//点击新建房间按钮
+	public void OnCreateClick()
+	{
+		MsgCreateRoom msg = new MsgCreateRoom();
+		NetManager.Send(msg);
+	}
+	public void OnRankClick()
+	{
+		MsgGetRank msg = new MsgGetRank();
+		NetManager.Send(msg);
+	}
 	//点击加入房间按钮
 	public void OnJoinClick(string idString)
 	{
@@ -167,13 +159,12 @@ public class RoomListPanel : BasePanel
 		}
 	}
 
-	//点击新建房间按钮
-	public void OnCreateClick()
+	public void OnMsgGetRank(MsgBase msgBase)
 	{
-		MsgCreateRoom msg = new MsgCreateRoom();
-		NetManager.Send(msg);
+		MsgGetRank msg = (MsgGetRank)msgBase;
+		PlayerInfo[] players = msg.playerInfos;
+		PanelManager.Instance.Open<RankPanel>(players);
 	}
-
 	//收到新建房间协议
 	public void OnMsgCreateRoom(MsgBase msgBase)
 	{
@@ -192,5 +183,31 @@ public class RoomListPanel : BasePanel
 			PanelManager.Instance.Open<TipPanel>("创建房间失败");
 		}
 	}
+	//收到成绩查询协议
+	public void OnMsgGetAchieve(MsgBase msgBase)
+	{
+		MsgGetAchieve msg = (MsgGetAchieve)msgBase;
+		scoreText.text = msg.score.ToString();
+	}
 
+	//收到房间列表协议
+	public void OnMsgGetRoomList(MsgBase msgBase)
+	{
+		MsgGetRoomList msg = (MsgGetRoomList)msgBase;
+		//清除房间列表
+		for (int i = content.childCount - 1; i >= 0; i--)
+		{
+			GameObject o = content.GetChild(i).gameObject;
+			Destroy(o);
+		}
+		//重新生成列表
+		if (msg.rooms == null)
+		{
+			return;
+		}
+		for (int i = 0; i < msg.rooms.Length; i++)
+		{
+			GenerateRoom(msg.rooms[i]);
+		}
+	}
 }

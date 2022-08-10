@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4183064840042116900}
   m_Layer: 0
   m_Name: Apple
-  m_TagString: Untagged
+  m_TagString: Apple
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -113,6 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73eb8696a331b92499c317c542e5fed0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parent: {fileID: 0}
 --- !u!95 &3522780269470244573
 Animator:
   serializedVersion: 3

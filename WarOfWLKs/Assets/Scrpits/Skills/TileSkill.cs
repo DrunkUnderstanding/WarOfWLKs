@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileSkill : SkillBase
+public class TileSkill : AppleSkill
 {
     public TileSkill(Actor target) : base()
     {
         //this.CoolDown = 3;
         //技能ID
-        this.m_skillID = 2;
+        this.Id = 2;
 
         //this.ProjSpeed = 2;
 

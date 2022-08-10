@@ -2,29 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FireSkill : SkillBase
+public class AppleSkill : SkillBase
 {
 
-
-    public FireSkill() : base()
+    public AppleSkill() : base()
     {
-        this.CoolDown = 3;
+        this.CoolDownTime = 3;
         //技能ID
-        this.m_skillID = 1;
+        this.Id = 1;
 
         this.ProjSpeed = 2;
 
-        this.CastDistance = 2;
+        this.SkillRange = 2;
 
         this.KeyCode = KeyCode.Q;
 
-        this.SkillName = "Fire";
+        this.SkillName = "Apple";
 
         this.ProjName = "Apple";
 
         this.Damage = 20;
 
         this.KnockBackDistance = 1;
+
+        this.iconPath = "Sprites/Icons/Skills/SpellBookPreface_18";
+
+        this.translationNum = 11;
     }
     // Start is called before the first frame update
 
