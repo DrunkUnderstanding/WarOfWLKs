@@ -9,7 +9,7 @@ public class CtrlActor : Actor
 	private float lastSendSyncTime = 0;
 
 	//同步帧率
-	public static float syncInterval = 0.1f;
+	public static float syncInterval = 0.05f;
 
 	public GameObject skillRangeGo;
 
@@ -95,11 +95,11 @@ public class CtrlActor : Actor
 			//设置技能范围显示
 			if (ReadySkill != null)
 			{
-				if (ReadySkill.Id != (int)SKILL.SHOUT) skillRangeGo.SetActive(false);
+				if (ReadySkill.id != (int)SKILL.SHOUT) skillRangeGo.SetActive(false);
 			}
 
 			//检测移动方向
-			CheckDir(m_destination);
+			CheckDir();
 
 			//Debug.Log(m_destination);
 			//播放动画
@@ -119,7 +119,6 @@ public class CtrlActor : Actor
 		if (ReadySkill == null) return;
 		if (Input.GetMouseButtonDown(0))// !IsOnButtom
 		{
-
 
 			//向鼠标点击的位置发射射线
 			//Vector2 skillPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -142,7 +141,7 @@ public class CtrlActor : Actor
 		{
 			if (Input.GetKeyDown(skill.KeyCode))
 			{
-
+				ReadySkill = skill;
 				CastReady(skill);
 
 			}
@@ -170,24 +169,35 @@ public class CtrlActor : Actor
 
 		//Debug.Log("CastShoutSkill");
 		ShoutSkill shoutSkill = (ShoutSkill)skillBase;
+		//获取技能范围内的Actor
 
-		skillRange.GetActorsInsideRange();
-		//技能冷却
-		ReadySkill.IsCoolDown = true;
+		List<Actor> actors = skillRange.GetActorsInsideRange();
+
+		//开启技能动画
+		shoutAni.SetTrigger("Shout");
 		//关闭技能准备,关闭范围显示
 		skillRangeGo.SetActive(false);
 
+
+		//技能效果
+		foreach (Actor hitActor in actors)
+		{
+			//伤害
+			hitActor.HandleDamage(shoutSkill.Damage, shoutSkill);
+			//击退
+			hitActor.KnockBack(this.transform.position, shoutSkill);
+			//发消息
+			SendMsgHit(actor, hitActor, shoutSkill);
+		}
 		//腾出ReadySkill置为null（前有判断需要使用
 		ReadySkill = null;
-		//传List给服务器
 	}
 
 	public void CastReady(SkillBase skill)
 	{
 		if (skill.IsCoolDown) return;
 		//设置当前已经准备好的技能
-
-		int skillId = skill.Id;
+		int skillId = skill.id;
 		switch (skillId)
 		{
 			case (int)SKILL.APPLE:
@@ -205,7 +215,7 @@ public class CtrlActor : Actor
 
 	public IEnumerator CastShoutReady(SkillBase skillBase)
 	{
-		Debug.Log("CastShoutReady");
+		//Debug.Log("CastShoutReady");
 		ShoutSkill shoutSkill = (ShoutSkill)skillBase;
 		//设置当前技能的作用范围
 		skillRangeGo.transform.localScale = Vector3.one * (float)(shoutSkill.SkillRange / 0.02);
@@ -217,9 +227,12 @@ public class CtrlActor : Actor
 		SendMsgSkill(skillPos, (int)SKILL.SHOUT); ;
 		//设置动画播放
 
-		//技能延迟释放
-		yield return new WaitForSeconds(shoutSkill.delay);
-		//经过 delay 时间 后释放技能
+
+		//技能冷却
+		ReadySkill.IsCoolDown = true;
+		//技能延迟释放，技能吟唱时间
+		yield return new WaitForSeconds(shoutSkill.chantTime);
+		//经过 chantTime 时间 后释放技能
 		CastShoutSkill(skillBase);
 	}
 	public void CastAppleReady(SkillBase skillBase)
@@ -230,6 +243,36 @@ public class CtrlActor : Actor
 		skillRange.ChangeSkillRange(appleSkill.SkillRange);
 		//开启技能范围显示
 		skillRangeGo.SetActive(!skillRangeGo.activeSelf);
+	}
 
+	/// <summary>
+	/// 发出被击消息
+	/// </summary>
+	/// <param name="actor">发起者</param>
+	/// <param name="hitActor">被击者</param>
+	/// <param name="skillBase">技能类型</param>
+	private void SendMsgHit(Actor actor, Actor hitActor, SkillBase skillBase)
+	{
+		if (hitActor == null || actor == null)
+		{
+			return;
+		}
+		//不是自己发的子弹击中自己
+		if (actor.id != GameManager.Instance.ctrllerId)
+		{
+			return;
+		}
+		//发消息
+		MsgHit msg = new MsgHit();
+
+		msg.targetId = hitActor.id;
+		msg.id = actor.id;
+		msg.skillId = skillBase.id;
+		msg.damage = skillBase.Damage;
+
+		msg.x = transform.position.x;
+		msg.y = transform.position.y;
+
+		NetManager.Send(msg);
 	}
 }

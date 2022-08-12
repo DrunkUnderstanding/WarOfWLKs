@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿
 
 //同步玩家信息
 public class MsgSyncActor : MsgBase
@@ -34,18 +33,19 @@ public class MsgHit : MsgBase
 	//客户端补充
 	//击中谁
 	public string targetId = "";
-	public List<string> targetIds;
+	//哪个角色攻击
+	public string id = "";
 	//技能ID
 	public int skillId = 0;
+	//受到的伤害
+	public int damage = 0;
 	//击中点	
 	public float x = 0f;
 	public float y = 0f;
 
-
 	//服务端补充
-	public string id = "";      //哪个角色攻击
 	public int hp = 0;          //被击中角色血量
-	public int damage = 0;      //受到的伤害
+
 }
 public class MsgBurned : MsgBase
 {

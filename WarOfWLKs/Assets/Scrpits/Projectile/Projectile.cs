@@ -95,8 +95,10 @@ public class Projectile : MonoBehaviour
 			//如果小于就判定到达目的地，执行待机
 			m_moveDir = Vector2.zero;
 
+
+			m_animator.SetTrigger("Disappear");
 			//回收子弹
-			GameManager.Instance.Pool.ReleaseObject(gameObject);
+			//GameManager.Instance.Pool.ReleaseObject(gameObject);
 			//停止播放动画
 			//m_animator.SetBool("Move", false);
 		}
@@ -126,11 +128,18 @@ public class Projectile : MonoBehaviour
 		hitActor.KnockBack(this.gameObject.transform.position, m_skill);
 		//参与射击的角色
 		Actor actor = parent.GetComponent<Actor>();
-
-
 		SendMsgHit(actor, hitActor);
-		GameManager.Instance.Pool.ReleaseObject(this.gameObject);
+		//释放动画
+		m_animator.SetTrigger("Disappear");
+		//子弹停在原地不要动了
+		m_moveDir = Vector2.zero;
+		//GameManager.Instance.Pool.ReleaseObject(this.gameObject);
 	}
+	/// <summary>
+	/// 发击中消息
+	/// </summary>
+	/// <param name="actor"></param>
+	/// <param name="hitActor"></param>
 	private void SendMsgHit(Actor actor, Actor hitActor)
 	{
 		if (hitActor == null || actor == null)
@@ -147,7 +156,7 @@ public class Projectile : MonoBehaviour
 
 		msg.targetId = hitActor.id;
 		msg.id = actor.id;
-		msg.skillId = m_skill.Id;
+		msg.skillId = m_skill.id;
 		msg.damage = m_skill.Damage;
 		//msg.damage = 
 		msg.x = transform.position.x;

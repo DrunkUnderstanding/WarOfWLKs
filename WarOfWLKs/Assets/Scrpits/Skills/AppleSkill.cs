@@ -9,7 +9,7 @@ public class AppleSkill : SkillBase
     {
         this.CoolDownTime = 3;
         //技能ID
-        this.Id = 1;
+        this.id = 1;
 
         this.ProjSpeed = 2;
 
@@ -23,7 +23,7 @@ public class AppleSkill : SkillBase
 
         this.Damage = 20;
 
-        this.KnockBackDistance = 1;
+        this.KnockBackDistance = 1f;
 
         this.iconPath = "Sprites/Icons/Skills/SpellBookPreface_18";
 

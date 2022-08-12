@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ShoutSkill : AppleSkill
 {
-    public float delay;
+    public float chantTime;
     public ShoutSkill() : base()
 	{
         this.KeyCode = KeyCode.W;
@@ -15,19 +15,19 @@ public class ShoutSkill : AppleSkill
 
         this.iconPath = "Sprites/Icons/Skills/SpellBookPreface_24";
 
-        this.CoolDownTime = 3;
+        this.CoolDownTime = 5;
         //技能ID
-        this.Id = 2;
+        this.id = 2;
 
         this.SkillRange = 0.5f;
 
         this.Damage = 10;
 
-        this.KnockBackDistance = 1;
+        this.KnockBackDistance = 2f;
 
         this.translationNum = 21;
 
-        this.delay = 2f;
+        this.chantTime = 2f;
     }
     public override void Update()
     {

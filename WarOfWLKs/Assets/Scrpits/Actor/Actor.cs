@@ -20,6 +20,8 @@ public class Actor : MonoBehaviour
 	[SerializeField]
 	protected float m_actorSpeed;
 
+	//当前的代码
+	protected Actor actor;
 	//玩家的生命值条
 	[SerializeField]
 	public Stat m_health;
@@ -35,6 +37,8 @@ public class Actor : MonoBehaviour
 
 	//动画
 	protected Animator ani;
+	//吼叫特效
+	protected Animator shoutAni;
 
 	[SerializeField]
 	//鼠标点击位置
@@ -56,7 +60,8 @@ public class Actor : MonoBehaviour
 	{
 		//在awake把所有绑定的代码绑定好，以免奇怪的事情发生
 		ani = this.gameObject.GetComponent<Animator>();
-
+		shoutAni = transform.Find("Shout").GetComponent<Animator>();
+		actor = this.gameObject.GetComponent<Actor>();
 		//游戏开始时绑定技能给Actor
 		Skills.Add(new AppleSkill());
 		Skills.Add(new ShoutSkill());
@@ -72,8 +77,9 @@ public class Actor : MonoBehaviour
 	/// <summary>
 	/// 检测玩家移动方向,并调整方向
 	/// </summary>
-	protected void CheckDir(Vector2 clickVec)
+	protected void CheckDir()
 	{
+		if (b_isKnocked) return;
 		if (m_moveVec.x <= 0)
 		{
 			if (m_moveVec.y >= 0)
@@ -125,8 +131,10 @@ public class Actor : MonoBehaviour
 			b_isKnocked = false;
 			//如果小于就判定到达目的地，执行待机
 			m_moveVec = Vector2.zero;
+
 			//停止播放动画
 			ani.SetBool("Move", false);
+			ani.SetBool("Knocked", false);
 		}
 	}
 	// Start is called before the first frame update
@@ -229,15 +237,28 @@ public class Actor : MonoBehaviour
 			Die();
 		}
 	}
-	public void KnockBack(Vector3 projectilePos, SkillBase skill)
+	/// <summary>
+	/// 被击后 后退
+	/// </summary>
+	/// <param name="knockPos"></param>
+	/// <param name="skill"></param>
+	public void KnockBack(Vector3 knockPos, SkillBase skill)
 	{
+		//当前位置
 		Vector2 thisPosVec2 = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
-		Vector3 moveDir = (this.gameObject.transform.position - projectilePos).normalized;
+		//移动方向
+		Vector3 moveDir = (this.gameObject.transform.position - knockPos).normalized;
+		//移动的向量
 		Vector2 moveVec = skill.KnockBackDistance * (new Vector2(moveDir.x, moveDir.y));
+		//移动到的最终位置
 		Vector2 moveTo = thisPosVec2 + moveVec;
 		m_moveVec = moveVec;
 		m_destination = moveTo;
 		b_isKnocked = true;
+
+		//设置动画
+		ani.SetBool("Knocked", true);
+		ani.SetBool("Move", false);
 	}
 
 	/// <summary>
@@ -261,12 +282,12 @@ public class Actor : MonoBehaviour
 	{
 		//Debug.Log(skillPos);
 		//激活子弹对象实例，并且获得其代码
-		Projectile projectile = GameManager.Instance.Pool.GetObject(ReadySkill.ProjName).GetComponent<Projectile>();
+		Projectile projectile = GameManager.Instance.Pool.GetObject(skillBase.ProjName).GetComponent<Projectile>();
 
 		Vector2 skillMoveVec = new Vector2(skillPos.x - this.transform.position.x, skillPos.y - this.transform.position.y);
 
 		//初始化技能投射
-		projectile.InitPorjectile(parent, skillMoveVec.normalized, skillPos, ReadySkill.SkillRange, ReadySkill.ProjSpeed, ReadySkill);
+		projectile.InitPorjectile(parent, skillMoveVec.normalized, skillPos, skillBase.SkillRange, skillBase.ProjSpeed, skillBase);
 
 		return;
 	}
@@ -321,7 +342,11 @@ public class Actor : MonoBehaviour
 	}
 	public void SyncShoutHit(MsgHit msg)
 	{
-
+		//伤害效果
+		HandleDamage(msg.damage, new ShoutSkill());
+		//击退效果
+		Vector3 knockPos = new Vector3(msg.x, msg.y, 0);
+		KnockBack(knockPos, new ShoutSkill());
 	}
 	public void SyncAppleHit(MsgHit msg)
 	{
@@ -329,8 +354,9 @@ public class Actor : MonoBehaviour
 		RecycleProjectile(msg.id);
 		//处理伤害效果
 		HandleDamage(msg.damage, new AppleSkill());
-		Vector3 vector3 = new Vector3(msg.x, msg.y, 0);
-		KnockBack(vector3, new AppleSkill());
+		//处理击退效果
+		Vector3 knockPos = new Vector3(msg.x, msg.y, 0);
+		KnockBack(knockPos, new AppleSkill());
 	}
 	/// <summary>
 	/// 回收子弹
@@ -375,7 +401,7 @@ public class Actor : MonoBehaviour
 			string syncActorId = actor;
 			if (syncActorId == id)
 			{
-				syncActor =(SyncActor) BattleManager.Instance.GetActor(syncActorId);
+				syncActor = (SyncActor)BattleManager.Instance.GetActor(syncActorId);
 				break;
 			}
 		}

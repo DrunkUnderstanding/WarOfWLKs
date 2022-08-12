@@ -8,7 +8,7 @@ public class TileSkill : AppleSkill
     {
         //this.CoolDown = 3;
         //技能ID
-        this.Id = 2;
+        this.id = 2;
 
         //this.ProjSpeed = 2;
 

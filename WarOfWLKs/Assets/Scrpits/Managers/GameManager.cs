@@ -65,7 +65,7 @@ public class GameManager : Singleton<GameManager>
 	// Update is called once per frame
 
 
-	
+
 	/// <summary>
 	/// 弃用
 	/// </summary>
@@ -90,11 +90,14 @@ public class GameManager : Singleton<GameManager>
 	void OnMsgKick(MsgBase msgBase)
 	{
 		PanelManager.Instance.Open<TipPanel>("被踢下线");
+		NetManager.Close();
 		PanelManager.Instance.Open<LoginPanel>();
+
 	}
 	//关闭连接
 	void OnConnectClose(string err)
 	{
 		Debug.Log("断开连接");
+		NetManager.Close();
 	}
 }
