@@ -182,6 +182,7 @@ public class CtrlActor : Actor
 		//技能效果
 		foreach (Actor hitActor in actors)
 		{
+			if (hitActor.camp == this.camp) continue;
 			//伤害
 			hitActor.HandleDamage(shoutSkill.Damage, shoutSkill);
 			//击退

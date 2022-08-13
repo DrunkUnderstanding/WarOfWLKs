@@ -54,6 +54,5 @@ MonoBehaviour:
   - id: 20
     value: username or password is incorrect
   - id: 21
-    value: '<color=yellow>Shout</color>
-
-      You screamed and scared people away'
+    value: "<color=yellow>Shout</color>\nCharging\uFF01\uFF01\uFF01\nYou screamed
+      and scared people away"
