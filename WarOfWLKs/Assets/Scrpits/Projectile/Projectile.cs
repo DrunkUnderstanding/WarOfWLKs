@@ -2,7 +2,7 @@
 
 public class Projectile : MonoBehaviour
 {
-	private Animator m_animator;
+	public Animator m_animator;
 
 	private SkillBase m_skill;
 

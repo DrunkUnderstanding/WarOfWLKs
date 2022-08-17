@@ -80,7 +80,7 @@ public class Actor : MonoBehaviour
 	protected void CheckDir()
 	{
 		if (b_isKnocked) return;
-		if (m_moveVec.x <= 0)
+		if (m_moveVec.x < 0)
 		{
 			if (m_moveVec.y >= 0)
 			{
@@ -114,24 +114,34 @@ public class Actor : MonoBehaviour
 		//移动向量！=（0,0）才能说明有地方可以去，不然就是点自己脚底板了
 		if (m_moveVec != Vector2.zero)
 		{
+
+			Stop();
+			//Debug.Log("1——" + transform.position.ToString("f5"));
 			//移动过去
 			transform.position = Vector2.MoveTowards(transform.position, m_destination, m_actorSpeed * Time.deltaTime);
-			Stop();
+			//Debug.Log("2——" + transform.position.ToString("f5"));
+
+			//Debug.Log(m_destination.ToString("f5"));
+
 		}
 	}
 
 	//停止移动
-	public void Stop()
+	public virtual void Stop()
 	{
+
+
 		//计算自身和目标点的距离
 		float distance = Vector2.Distance(transform.position, m_destination);
+		//Debug.Log(distance.ToString("f5"));
 		//判断和目标点的距离是否小于0.01f
-		if (distance < 0.01f)
+		if (distance < 0.0001f)
 		{
 			b_isKnocked = false;
 			//如果小于就判定到达目的地，执行待机
 			m_moveVec = Vector2.zero;
-
+			//Debug.Log(distance.ToString("f5"));
+			//Debug.Log(string.Format("<color=green>Stop调用 Move false</color>"));
 			//停止播放动画
 			ani.SetBool("Move", false);
 			ani.SetBool("Knocked", false);
@@ -175,14 +185,26 @@ public class Actor : MonoBehaviour
 		//HandleDamage(20f, m_readySkill);
 	}
 
+	public void MoveTo(Vector2 destination)
+	{
 
+
+		if (b_isKnocked) return;
+
+		//设置目的地
+		m_destination = destination;
+		//设置方向
+		m_moveVec = m_destination - (Vector2)transform.position;
+
+
+	}
 
 	/// <summary>
 	/// 处理角色的释放技能CD、等信息
 	/// </summary>
 	private void SkillsUpdate()
 	{
-		foreach (AppleSkill skill in Skills)
+		foreach (SkillBase skill in Skills)
 		{
 			skill.Update();
 		}
@@ -390,7 +412,7 @@ public class Actor : MonoBehaviour
 			Debug.Log("Projectile's father is null !");
 			return;
 		}
-		GameManager.Instance.Pool.ReleaseObject(projectile.gameObject);
+		projectile.m_animator.SetTrigger("Disappear");
 	}
 	public SyncActor GetSyncActor(string id)
 	{

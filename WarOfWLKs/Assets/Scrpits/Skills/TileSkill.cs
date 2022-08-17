@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TileSkill : AppleSkill
+public class TileSkill : SkillBase
 {
     public TileSkill(Actor target) : base()
     {

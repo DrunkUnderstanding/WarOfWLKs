@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
+using zFrame.UI;
 public class GamingPanel : BasePanel
 {
 	private Button skillButton0;
@@ -24,6 +24,9 @@ public class GamingPanel : BasePanel
 	private SkillSlot skillSlot3;
 
 	private Button settingBtn;
+
+	private Joystick joystick;
+
 	public override void OnInit()
 	{
 		skinPath = "Prefabs/UI/Panels/GamingPanel";
@@ -44,14 +47,15 @@ public class GamingPanel : BasePanel
 		skillSlot3 = skin.transform.Find("SkillPanel/SkillButton(3)").GetComponent<SkillSlot>();
 
 		settingBtn = skin.transform.Find("SettingBtn").GetComponent<Button>();
-
+		joystick = skin.transform.Find("JoyStick").GetComponent<Joystick>();
 		//往控制角色的技能槽添加技能
 		CtrlActor ctrlActor = GameManager.Instance.PlayerSelf.GetComponent<CtrlActor>();
 		skillSlot0.skill = ctrlActor.Skills[0];
 		skillSlot1.skill = ctrlActor.Skills[1];
 		skillSlot2.skill = ctrlActor.Skills[0];
 		skillSlot3.skill = ctrlActor.Skills[0];
-
+		//添加控制监听
+		ctrlActor.SetJoyStick(joystick);
 		//监听
 		skillButton0.onClick.AddListener(OnSkill0Click);
 		skillButton1.onClick.AddListener(OnSkill1Click);

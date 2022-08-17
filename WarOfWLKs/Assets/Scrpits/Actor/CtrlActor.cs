@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using zFrame.UI;
 
 public class CtrlActor : Actor
 {
@@ -15,6 +16,7 @@ public class CtrlActor : Actor
 
 	public SkillRange skillRange;
 
+	public Joystick joystick;
 	public override void Awake()
 	{
 		base.Awake();
@@ -26,9 +28,26 @@ public class CtrlActor : Actor
 	protected override void Start()
 	{
 		base.Start();
+		joystick.OnValueChanged.AddListener(v =>
+		{
+			if (v.magnitude != 0)
+			{
+				//Debug.Log("hori " + v.x + " verti " + v.y);
+				Vector2 direction = new Vector2(v.x, v.y);
+				Vector2 destination = direction * m_actorSpeed * Time.deltaTime + new Vector2(transform.position.x, transform.position.y);
+				ani.SetBool("Move", true);
+				MoveTo(destination);
+				CheckDir();
+				//Move(direction * speed * Time.deltaTime);
+				//transform.rotation = Quaternion.LookRotation(new Vector3(v.x, 0, v.y));
+			}
+		});
+	}
+	public void SetJoyStick(Joystick joystick)
+	{
+		this.joystick = joystick;
 
 	}
-
 	// Update is called once per frame
 	protected override void Update()
 	{
@@ -137,7 +156,7 @@ public class CtrlActor : Actor
 	public void SkillKeyDownUpdate()
 	{
 		//遍历绑定的技能列表获取Click信息
-		foreach (AppleSkill skill in Skills)
+		foreach (SkillBase skill in Skills)
 		{
 			if (Input.GetKeyDown(skill.KeyCode))
 			{

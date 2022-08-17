@@ -179,6 +179,7 @@ MonoBehaviour:
   m_destination: {x: 0, y: 0}
   skillRangeGo: {fileID: 0}
   skillRange: {fileID: 0}
+  joystick: {fileID: 0}
 --- !u!1 &2154509797567095212
 GameObject:
   m_ObjectHideFlags: 0

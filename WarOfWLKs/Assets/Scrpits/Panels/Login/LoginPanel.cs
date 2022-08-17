@@ -52,7 +52,7 @@ public class LoginPanel : BasePanel
 		NetManager.AddEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
 		NetManager.AddEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
 		//连接服务器
-		NetManager.Connect("192.168.96.154", 8888);
+		NetManager.Connect("47.102.144.145", 8888);
 	}
 
 	//关闭

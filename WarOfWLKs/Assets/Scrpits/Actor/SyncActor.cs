@@ -9,6 +9,7 @@ public class SyncActor : Actor
 
 	private Vector2 syncDestination;
 
+
 	public override void Awake()
 	{
 		base.Awake();
@@ -23,24 +24,26 @@ public class SyncActor : Actor
 
 	public void SyncPos(MsgSyncActor msg)
 	{
-		Vector2 curPos = new Vector2(msg.x, msg.y);
-		MoveTo(curPos);
-
-		float subX = curPos.x - lastPos.x;
-		float subY = curPos.y - lastPos.y;
-		if (Mathf.Abs(subX) >= 0.05f || Mathf.Abs(subY) >= 0.05f)
+		Vector2 syncPos = new Vector2(msg.x, msg.y);
+		//Debug.Log(msg.x);
+		//Debug.Log(msg.y);
+		Vector2 curPos = new Vector2(transform.position.x, transform.position.y);
+		if (syncPos == curPos) return;
+		// Debug.Log("同步位置：" + syncPos + "\n当前位置" + curPos);
+		float distance = Vector2.Distance(transform.position, lastPos);
+		//不被击退的时候
+		//并且当前位置与上一个移动点的位置的距离＜0.01时
+		if (!b_isKnocked && m_moveVec == Vector2.zero)
 		{
-			//不被击退的时候开始动画
-			if (!b_isKnocked)
-			{
-				StartAni();
-
-			}
-			//设置行走方向
-			CheckDir();
-			//设置上一次的行走节点位置
-			lastPos = curPos;
+			//Debug.Log("Sync调用 Move true");
+			//开始行走动画
+			StartAni();
 		}
+		MoveTo(syncPos);
+		//设置行走方向
+		CheckDir();
+		//设置上一次的行走节点位置为这次的行走位置
+		lastPos = syncPos;
 	}
 
 	public void SyncSkill(MsgSkill msg)
@@ -57,40 +60,36 @@ public class SyncActor : Actor
 				}
 			case (int)SKILL.SHOUT:
 				{
-					SyncShoutSkill(msg);
+					StartCoroutine(SyncShoutSkill(msg));
 					break;
 				}
 		}
 	}
 
-	public void SyncShoutSkill(MsgSkill msg)
+	public IEnumerator SyncShoutSkill(MsgSkill msg)
 	{
-
+		ShoutSkill shoutSkill = new ShoutSkill();
+		yield return new WaitForSeconds(shoutSkill.chantTime);
+		//开启技能动画
+		shoutAni.SetTrigger("Shout");
 	}
 	public void SyncAppleSkill(MsgSkill msg)
 	{
 		Vector2 skillPos = new Vector2(msg.x, msg.y);
 		AppleSkill appleSkill = new AppleSkill();
 
-		CastAppleSkill(skillPos, appleSkill, GetSyncActor(msg.id).gameObject);
+		CastAppleSkill(skillPos, appleSkill, gameObject);
+	}
+	public override void Stop()
+	{
+
+		base.Stop();
 	}
 	public void StartAni()
 	{
 		ani.SetBool("Move", true);
 	}
-	private void MoveTo(Vector2 destination)
-	{
 
-
-		if (b_isKnocked) return;
-
-		//设置目的地
-		m_destination = destination;
-		//设置方向
-		m_moveVec = m_destination - (Vector2)transform.position;
-
-
-	}
 	// Start is called before the first frame update
 	protected override void Start()
 	{
