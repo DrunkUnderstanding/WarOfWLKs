@@ -180,6 +180,7 @@ MonoBehaviour:
   skillRangeGo: {fileID: 0}
   skillRange: {fileID: 0}
   joystick: {fileID: 0}
+  gamingPanel: {fileID: 0}
 --- !u!1 &2154509797567095212
 GameObject:
   m_ObjectHideFlags: 0
@@ -431,10 +432,25 @@ PrefabInstance:
       propertyPath: m_lerpSpeed
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 2073804942187837300, guid: aa921b2347991364bb721aa47f65ff14,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2146969941711241958, guid: aa921b2347991364bb721aa47f65ff14,
+        type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4473200844523529429, guid: aa921b2347991364bb721aa47f65ff14,
         type: 3}
       propertyPath: m_FontData.m_RichText
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5208080574075345621, guid: aa921b2347991364bb721aa47f65ff14,
+        type: 3}
+      propertyPath: m_BlockingMask.m_Bits
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6296693000877963805, guid: aa921b2347991364bb721aa47f65ff14,
         type: 3}
