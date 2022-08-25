@@ -20,7 +20,7 @@ namespace HT.InfiniteList
         /// <summary>
         /// 元素高度
         /// </summary>
-        public int Height = 20;
+        public int Height = 80;
         /// <summary>
         /// 元素之间的间隔
         /// </summary>

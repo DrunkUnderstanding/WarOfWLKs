@@ -88,6 +88,7 @@ public class GamingPanel : BasePanel
 	private UnityAction<BaseEventData> OnPointerExitSlot;
 	public void OnSkill0Click()
 	{
+		//settingBtn.gameObject.SetActive(!settingBtn.gameObject.activeSelf);
 		CtrlActor ctrlActor = GameManager.Instance.PlayerSelf.GetComponent<CtrlActor>();
 		ctrlActor.ReadySkill = skillSlot0.skill;
 		ctrlActor.CastReady(ctrlActor.ReadySkill);
@@ -106,7 +107,37 @@ public class GamingPanel : BasePanel
 	{
 
 	}
+	public void GamingPanelUpdate()
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			switch (i)
+			{
+				case 0:
+					{
+						if (!skillSlot0.skill.IsCoolDown) skillButton0.interactable = true;
+						break;
+					}
+				case 1:
+					{
+						if (!skillSlot1.skill.IsCoolDown) skillButton1.interactable = true;
 
+						break;
+					}
+				case 2:
+					{
+						if (!skillSlot2.skill.IsCoolDown) skillButton2.interactable = true;
+						break;
+					}
+				case 3:
+					{
+						if (!skillSlot3.skill.IsCoolDown) skillButton3.interactable = true;
+
+						break;
+					}
+			}
+		}
+	}
 
 	private void OnStateShow0(BaseEventData p)
 	{
@@ -148,6 +179,37 @@ public class GamingPanel : BasePanel
 	public void OnSettingClick()
 	{
 		PanelManager.Instance.Open<SettingPanel>();
-		Close();
+		//Close();
+	}
+
+	public void SetSkillButton(int i, bool active)
+	{
+		switch (i)
+		{
+			case 0:
+				{
+					skillButton0.interactable = active;
+					break;
+				}
+			case 1:
+				{
+					skillButton1.interactable = active;
+					break;
+				}
+			case 2:
+				{
+					skillButton2.interactable = active;
+					break;
+				}
+			case 3:
+				{
+					skillButton3.interactable = active;
+					break;
+				}
+		}
+	}
+	public void SetSettingButton(bool set)
+	{
+		settingBtn.gameObject.SetActive(set);
 	}
 }

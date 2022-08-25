@@ -7,7 +7,7 @@ using System.Linq;
 public static class NetManager
 {
 	//定义套接字
-	static Socket socket;
+	public static Socket socket;
 	//接收缓冲区
 	static ByteArray readBuff;
 	//写入队列
@@ -169,23 +169,23 @@ public static class NetManager
 			AddMsgListener("MsgPong", OnMsgPong);
 		}
 	}
-/*	private static void ConnectSync(string ip, int port)
-	{
-		try
+	/*	private static void ConnectSync(string ip, int port)
 		{
-			socket.Connect(ip, port);
-			Debug.Log("Socket Connect Succ ");
-			FireEvent(NetEvent.ConnectSucc, "");
-			isConnecting = false;
-			socket.BeginReceive(readBuff.bytes, readBuff.writeIdx, readBuff.remain, 0, ReceiveCallback, socket);
-		}
-		catch (SocketException ex)
-		{
-			Debug.Log("Socket Connect fail " + ex.ToString());
-			FireEvent(NetEvent.ConnectFail, ex.ToString());
-			isConnecting = false;
-		}
-	}*/
+			try
+			{
+				socket.Connect(ip, port);
+				Debug.Log("Socket Connect Succ ");
+				FireEvent(NetEvent.ConnectSucc, "");
+				isConnecting = false;
+				socket.BeginReceive(readBuff.bytes, readBuff.writeIdx, readBuff.remain, 0, ReceiveCallback, socket);
+			}
+			catch (SocketException ex)
+			{
+				Debug.Log("Socket Connect fail " + ex.ToString());
+				FireEvent(NetEvent.ConnectFail, ex.ToString());
+				isConnecting = false;
+			}
+		}*/
 	//Connect回调
 	private static void ConnectCallback(IAsyncResult ar)
 	{
@@ -297,18 +297,17 @@ public static class NetManager
 		ByteArray ba;
 		lock (writeQueue)
 		{
-			if (writeQueue.Count > 0)
-				ba = writeQueue.First();
-			else
-			{
-				if (isClosing)
-				{
-					//socket.Shutdown(SocketShutdown.Both);
-					socket.Close();
-				}
-				return;
-			}
-
+			ba = writeQueue.First();
+			/*			else
+						{
+							if (isClosing)
+							{
+								//socket.Shutdown(SocketShutdown.Both);
+								socket.Close();
+							}
+							return;
+						}
+			*/
 		}
 		ba.readIdx += count;
 		//完整发送
@@ -343,7 +342,7 @@ public static class NetManager
 		try
 		{
 			Socket socket = (Socket)ar.AsyncState;
-			//if (socket == null) return;
+			if (socket == null) return;
 			//获取接收数据长度
 			int count = socket.EndReceive(ar);
 			readBuff.writeIdx += count;
@@ -357,6 +356,7 @@ public static class NetManager
 			}
 			socket.BeginReceive(readBuff.bytes, readBuff.writeIdx,
 					readBuff.remain, 0, ReceiveCallback, socket);
+			Debug.Log(readBuff.remain);
 		}
 		catch (SocketException ex)
 		{

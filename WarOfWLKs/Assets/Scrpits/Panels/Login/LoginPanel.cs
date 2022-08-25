@@ -40,8 +40,8 @@ public class LoginPanel : BasePanel
 		//初始化LanguageDropdown的值
 		languageDropdown.value = GameManager.curLanguage;
 		//初始化
-		idInput.text = PlayerPrefs.GetString("idInput", "Enter your ID");
-		pwInput.text = PlayerPrefs.GetString("pwInput", "Enter your PassWord");
+		idInput.text = PlayerPrefs.GetString("idInput", "");
+		pwInput.text = PlayerPrefs.GetString("pwInput", "");
 		//监听
 		loginBtn.onClick.AddListener(OnLoginClick);
 		regBtn.onClick.AddListener(OnRegClick);
@@ -51,8 +51,7 @@ public class LoginPanel : BasePanel
 		//网络事件监听
 		NetManager.AddEventListener(NetManager.NetEvent.ConnectSucc, OnConnectSucc);
 		NetManager.AddEventListener(NetManager.NetEvent.ConnectFail, OnConnectFail);
-		//连接服务器
-		NetManager.Connect("47.102.144.145", 8888);
+
 	}
 
 	//关闭
@@ -101,6 +100,7 @@ public class LoginPanel : BasePanel
 	//当按下注册按钮
 	public void OnRegClick()
 	{
+		NetManager.Connect("47.102.144.145", 8888);
 		PanelManager.Instance.Open<RegisterPanel>();
 	}
 
@@ -109,13 +109,18 @@ public class LoginPanel : BasePanel
 	//当按下登陆按钮
 	public void OnLoginClick()
 	{
+		NetManager.Connect("47.102.144.145", 8888);
 
-
+		StartCoroutine(StartLogin());
+	}
+	public IEnumerator StartLogin()
+	{
+		yield return new WaitForSeconds(0.5f);
 		//用户名密码为空
 		if (idInput.text == "" || pwInput.text == "")
 		{
 			PanelManager.Instance.Open<TipPanel>("用户名和密码不能为空");
-			return;
+			yield break;
 		}
 		//发送
 		MsgLogin msgLogin = new MsgLogin();
@@ -126,7 +131,6 @@ public class LoginPanel : BasePanel
 		PlayerPrefs.SetString("pwInput", pwInput.text);
 		NetManager.Send(msgLogin);
 	}
-
 	//收到登陆协议
 	public void OnMsgLogin(MsgBase msgBase)
 	{

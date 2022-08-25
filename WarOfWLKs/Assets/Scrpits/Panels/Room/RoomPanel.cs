@@ -176,6 +176,7 @@ public class RoomPanel : BasePanel
 		//开战
 		if (msg.result == 0)
 		{
+
 			//等待战斗推送的协议
 			Close();
 		}

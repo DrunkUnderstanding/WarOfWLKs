@@ -34,6 +34,7 @@ public class ShoutSkill : AppleSkill
 
 
         base.Update();
+
     }
 }
 

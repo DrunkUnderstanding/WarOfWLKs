@@ -1,4 +1,16 @@
-﻿using System.Collections;
+﻿
+#if UNITY_ANDROID && !UNITY_EDITOR
+#define ANDROID
+#endif
+
+
+#if UNITY_IPHONE && !UNITY_EDITOR
+#define IPHONE
+#endif
+
+
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -10,19 +22,23 @@ public class CtrlActor : Actor
 	private float lastSendSyncTime = 0;
 
 	//同步帧率
-	public static float syncInterval = 0.05f;
+	public static float syncInterval = 0.1f;
 
 	public GameObject skillRangeGo;
 
 	public SkillRange skillRange;
 
 	public Joystick joystick;
+
+	public GamingPanel gamingPanel;
+
 	public override void Awake()
 	{
 		base.Awake();
 		skillRangeGo = transform.Find("SkillRange").gameObject;
 		skillRange = skillRangeGo.GetComponent<SkillRange>();
 		skillRangeGo.SetActive(false);
+
 	}
 	// Start is called before the first frame update
 	protected override void Start()
@@ -58,6 +74,11 @@ public class CtrlActor : Actor
 		SkillKeyDownUpdate();
 
 		SyncUpdate();
+		if (gamingPanel != null)
+		{
+			gamingPanel = (GamingPanel)PanelManager.Instance.GetPanelByName("GamingPanel");
+			gamingPanel.GamingPanelUpdate();
+		}
 
 		//测试死亡需要，绑定技能
 		//ReadySkill = Skills[0];
@@ -72,6 +93,7 @@ public class CtrlActor : Actor
 		NetManager.Send(msg);
 	}
 	public void SyncUpdate()
+
 	{
 		//时间间隔判断
 		if (Time.time - lastSendSyncTime < syncInterval)
@@ -79,6 +101,8 @@ public class CtrlActor : Actor
 			return;
 		}
 		lastSendSyncTime = Time.time;
+		//
+		Debug.Log("SyncPosSend");
 		//发送同步协议
 		MsgSyncActor msg = new MsgSyncActor();
 		msg.x = transform.position.x;
@@ -92,9 +116,21 @@ public class CtrlActor : Actor
 	{
 		if (IsDie()) return;
 		//如果点到的位置是UI则直接return
-		if (EventSystem.current.IsPointerOverGameObject()) return;
-		GetMouse0Down();
-		GetMouse1Down();
+		if (Input.GetMouseButtonDown(0) || (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began))
+		{
+#if IPHONE || ANDROID
+			if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+#else
+			if (EventSystem.current.IsPointerOverGameObject())
+#endif
+
+				Debug.Log("当前触摸在UI上");
+			else
+				GetMouse0Down();
+		}
+		//if (EventSystem.current.IsPointerOverGameObject()) return;
+
+		//GetMouse1Down();
 	}
 	/// <summary>
 	/// 获取玩家右键点击位置
@@ -124,7 +160,7 @@ public class CtrlActor : Actor
 			//播放动画
 			ani.SetBool("Move", true);
 			//发送同步消息
-			SyncUpdate();
+			//SyncUpdate();
 
 		}
 	}
@@ -170,7 +206,11 @@ public class CtrlActor : Actor
 	{
 
 		base.CastAppleSkill(skillPos, skillBase, this.gameObject);
-
+		gamingPanel = (GamingPanel)PanelManager.Instance.GetPanelByName("GamingPanel");
+		//关闭button使用
+		gamingPanel.SetSkillButton(0, false);
+		//
+		//gamingPanel.SetSettingButton(true);
 		//技能冷却
 		ReadySkill.IsCoolDown = true;
 		//关闭技能准备,关闭范围显示
@@ -196,8 +236,9 @@ public class CtrlActor : Actor
 		shoutAni.SetTrigger("Shout");
 		//关闭技能准备,关闭范围显示
 		skillRangeGo.SetActive(false);
-
-
+		//关闭button使用
+		gamingPanel = (GamingPanel)PanelManager.Instance.GetPanelByName("GamingPanel");
+		gamingPanel.SetSkillButton(1, false);
 		//技能效果
 		foreach (Actor hitActor in actors)
 		{
@@ -209,6 +250,7 @@ public class CtrlActor : Actor
 			//发消息
 			SendMsgHit(actor, hitActor, shoutSkill);
 		}
+
 		//腾出ReadySkill置为null（前有判断需要使用
 		ReadySkill = null;
 	}
@@ -263,6 +305,7 @@ public class CtrlActor : Actor
 		skillRange.ChangeSkillRange(appleSkill.SkillRange);
 		//开启技能范围显示
 		skillRangeGo.SetActive(!skillRangeGo.activeSelf);
+
 	}
 
 	/// <summary>

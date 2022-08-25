@@ -52,7 +52,7 @@ public class PanelManager : Singleton<PanelManager>
 		//列表
 		panels.Add(name, panel);
 		//OnShow
-		panel.OnShow(para); 
+		panel.OnShow(para);
 		return panel;
 	}
 
@@ -75,5 +75,17 @@ public class PanelManager : Singleton<PanelManager>
 		//销毁
 		GameObject.Destroy(panel.skin);
 		Component.Destroy(panel);
+	}
+	public BasePanel GetPanelByName(string name)
+	{
+		if (panels.ContainsKey(name))
+		{
+			return panels[name];
+		}
+		else
+		{
+			//Debug.LogWarning("获取窗口失败："+name);
+		}
+		return null;
 	}
 }

@@ -95,7 +95,8 @@ public class LevelManager : Singleton<LevelManager>
 		int mapY = m_mapSize.Y;
 
 		//世界开始的起点位置
-		Vector3 worldStart = Camera.main.ScreenToWorldPoint(new Vector3(0, Screen.height));
+		Vector3 worldStart = new Vector3(-1.77f, 1, 0);
+		//Vector3 worldStart = Camera.main.ScreenToWorldPoint(new Vector3(0, Screen.height));
 
 		//生成地图
 		for (int y = 0; y < mapY; y++)
@@ -156,10 +157,23 @@ public class LevelManager : Singleton<LevelManager>
 	/// <param name="worldStart">世界起点</param>
 	private void PlaceTile(string tileType, int x, int y, Vector3 worldStart)
 	{
-		int tileIndex = int.Parse(tileType);
+		Debug.Log(tileType);
+		int tileIndex = 0;
+		//tileIndex = int.Parse(tileType);
+		TileScript newTile;
+		if (tileType == "\n")
+		{
+			//获取新的Object以便于修改position
+			newTile = Instantiate(m_tilePrefabs[9]).GetComponent<TileScript>();
+
+			//修改positon,Point的位置
+			newTile.Setup(new Point(x, y), new Vector3(worldStart.x + (TileSize * x), worldStart.y - (TileSize * y), 0), m_tilesFather);
+			return;
+		}
+		if (!int.TryParse(tileType, out tileIndex)) return;
 
 		//获取新的Object以便于修改position
-		TileScript newTile = Instantiate(m_tilePrefabs[tileIndex]).GetComponent<TileScript>();
+		newTile = Instantiate(m_tilePrefabs[tileIndex]).GetComponent<TileScript>();
 
 		//修改positon,Point的位置
 		newTile.Setup(new Point(x, y), new Vector3(worldStart.x + (TileSize * x), worldStart.y - (TileSize * y), 0), m_tilesFather);

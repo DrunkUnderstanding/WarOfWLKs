@@ -87,6 +87,7 @@ public class ResultPanel : BasePanel
 		BattleManager.Instance.DestoryActors();
 		//LevelManager.Instance.DestoryLevel();
 		PanelManager.Instance.Close("GamingPanel");
+		PanelManager.Instance.Close("SettingPanel");
 		//发送查询
 		MsgGetRoomInfo msg = new MsgGetRoomInfo();
 		//Debug.Log(string.Format("<color=#ff0000>{0}</color>", "[Send] GetRoomInfo"));

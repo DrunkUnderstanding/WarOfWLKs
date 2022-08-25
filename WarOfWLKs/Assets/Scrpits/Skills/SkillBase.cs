@@ -68,6 +68,7 @@ public class SkillBase
 	{
 		if (IsCoolDown)
 		{
+
 			cdDuration += Time.deltaTime;
 			//Debug.Log(m_cdDuration);
 			if (cdDuration >= CoolDownTime)
